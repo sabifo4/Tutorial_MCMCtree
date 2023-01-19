@@ -36,7 +36,7 @@ The beta parameter when time unit = 1 Myr is normally too large, so we shall foc
 
 If you run the [R script `calculate_rateprior.R`](scripts/calculate_rateprior.R), you will see how all the steps described above take place and a new PDF file with the prior distribution to be used will be generated in a new directory called `out_RData`.
 
-As part of this tutorial, we have included a [template control file](01_PC/01_Hessian/control_files/prepcodeml.ctl) with the $\alpha$ and $\beta$ parameters (as defined using the R script above) for the gamma distribution as a prior on the rates. Note that several options will be subsequently modified to fit the analysis with this dataset (i.e., you will see some options that have flags in capital letters, which will be replaced with the correct value for said option).
+As part of this tutorial, we have included a [template control file](control_files/prepbaseml.ctl) with the $\alpha$ and $\beta$ parameters (as defined using the R script above) for the gamma distribution as a prior on the rates. Note that several options will be subsequently modified to fit the analysis with this dataset (i.e., you will see some options that have flags in capital letters, which will be replaced with the correct value for said option).
 
 Please note that, if you are adapting this tutorial to analyse a different dataset, you should change the options of the control file to fir your dataset. E.g.:
 
