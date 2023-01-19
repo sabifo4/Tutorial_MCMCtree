@@ -4,7 +4,7 @@ Before running `MCMCtree`, we need to calculate the gradient and the Hessian so 
 
 ## 1. Pick rate prior
 
-We will use a vague gamma distribution for the dataset considering the tree height (molecular distance in substitutions per site) and the divergence time at the root of the phylogeny (in time unit). As the [tree file in NEXUS](../../00_data/00_raw_data/tree_ML.nexus) format has information about the branhc lengths, we can load this file in `R` to estimate the tree height. We also have defined the root calibration in [the calibrated tree file](../../00_data/01_inp_data/tree_ML_calib.tree), which is a rough idea of the age of the root of the phylogeny based on the fossil record. This calibration suggests that the mean root age is 583 Myr (i.e., the first parameter of the ST distribution used to calibrate the root is $\alpha=5.83$, and so we can use either 583 Myr (time unit = 1 Myr) or 5.83 in 100 Myr time unit. 
+We will use a vague gamma distribution for the dataset considering the tree height (molecular distance in substitutions per site) and the divergence time at the root of the phylogeny (in time unit). As the [tree file in NEXUS](../../00_data/00_raw_data/tree_ML.nexus) format has information about the branhc lengths, we can load this file in `R` to estimate the tree height. We also have defined the root calibration in the calibrated tree file file that you just generated, which is a rough idea of the age of the root of the phylogeny based on the fossil record. This calibration suggests that the mean root age is 583 Myr (i.e., the first parameter of the ST distribution used to calibrate the root is $\alpha=5.83$, and so we can use either 583 Myr (time unit = 1 Myr) or 5.83 in 100 Myr time unit. 
 
 By setting a vague shape ($\alpha=2$) for the gamma distribution, we can account for the uncertainty on the mean rate. If we had more knowledge on the mean rate, however, we should use a narrower prior with a larger $\alpha$ that better represents our prior information. 
 
@@ -36,7 +36,7 @@ The beta parameter when time unit = 1 Myr is normally too large, so we shall foc
 
 If you run the [R script `calculate_rateprior.R`](scripts/calculate_rateprior.R), you will see how all the steps described above take place and a new PDF file with the prior distribution to be used will be generated in a new directory called `out_RData`.
 
-As part of this tutorial, we have included a [template control file](control_files/prepcodeml.ctl) with the $\alpha$ and $\beta$ parameters (as defined using the R script above) for the gamma distribution as a prior on the rates. Note that several options will be subsequently modified to fit the analysis with this dataset (i.e., you will see some options that have flags in capital letters, which will be replaced with the correct value for said option).
+As part of this tutorial, we have included a [template control file](01_PC/01_Hessian/control_files/prepcodeml.ctl) with the $\alpha$ and $\beta$ parameters (as defined using the R script above) for the gamma distribution as a prior on the rates. Note that several options will be subsequently modified to fit the analysis with this dataset (i.e., you will see some options that have flags in capital letters, which will be replaced with the correct value for said option).
 
 Please note that, if you are adapting this tutorial to analyse a different dataset, you should change the options of the control file to fir your dataset. E.g.:
 
