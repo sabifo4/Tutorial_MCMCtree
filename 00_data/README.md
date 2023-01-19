@@ -11,7 +11,7 @@ In this tutorial, we will use [an example dataset](00_raw_data) to see how we ca
 
 Inside the directory where this `README.md` file is, you can find a subdirectory called [`00_raw_data`](00_raw_data) with the example alignment and tree files aforementioned.
 
-If you open the [alignment file](00_raw_data/raw_aln.fa), you will see that each aligned sequence is not in a unique line, which sometimes makes it more difficult to parse the file. The first thing that we will do now is to run [an in-house PERL script](scripts/one_line_fasta.pl) that will have all sequences in one line:
+If you open the [alignment file](00_data/00_raw_data/raw_aln.fa), you will see that each aligned sequence is not in a unique line, which sometimes makes it more difficult to parse the file. The first thing that we will do now is to run [an in-house PERL script](scripts/one_line_fasta.pl) that will have all sequences in one line:
 
 ```sh
 # Run the next commands from the 
@@ -86,4 +86,4 @@ sed -i 's/'\"'/'\''/g' ../01_inp_data/$t_noext"_calib.tree"
 
 ---
 
-Now, you are ready to move onto the next step: [calculating the Hessian and the gradient!](../01_Hessian).
+Now, you are ready to move onto the next step: [calculating the Hessian and the gradient!](../01_PC/01_Hessian).
