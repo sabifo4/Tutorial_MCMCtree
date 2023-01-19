@@ -29,7 +29,7 @@ done
 done
 ```
 
-Now, we will use the same approach we used to generate the pipelines to run `CODEML`. In this case, however, the bash scripts have been modified accordingly. You will find them in the [`scripts` directory](scripts), from where you will copy them onto the [`main/scripts`](../../main/scripts/) directory. 
+Now, we will use the same approach we used to generate the pipelines to run `CODEML`. In this case, however, the bash scripts have been modified accordingly. You will find them in the [`scripts` directory](scripts), from where you will copy them onto the `main/scripts` directory that you will have alreay generated. 
 
 ```sh
 # Run from the `01_PC/02_MCMCtree/scripts`
@@ -322,7 +322,7 @@ mcmctree *ctl
 
 And that should be it: you now have the final timetree under each relaxed-clock model!
 
-# QUESTION (hard)
+# EXERCISE (hard)
 
 How would you now plot the effective prior versus the user-specified prior to make sure that there is no conflict between the calibrations specified by the user and the ones used by `MCMCtree`?
 
