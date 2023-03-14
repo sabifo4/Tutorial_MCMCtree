@@ -16,7 +16,7 @@ setwd( wd )
 #--------------#
 # LOAD OBJECTS #
 #--------------#
-raw_tt <- ape::read.tree( file = "../00_data/00_raw_data/tree_ML.tree" )
+raw_tt <- ape::read.tree( file = "../../00_data/00_raw_data/tree_ML.tree" )
 
 #-------#
 # TASKS #
@@ -92,13 +92,13 @@ if ( ! dir.exists( "out_RData" ) ){
 pdf( file = "out_RData/gamma_dists.pdf", paper = "a4" )
 par( mfrow = c(1,2) )
 curve( dgamma( x, alpha, rate = beta100 ), from = 0, to = 2, col = "black" )
-legend( "topright", legend = c( "G(2,4) " ), 
+legend( "topright", legend = c( "G(2,32) " ), 
         col = "black", lty = 1, box.lty = 2 )
 curve( dgamma( x, shape = alpha_const3, rate = beta_const3 ), from = 0, to = 2, col = "green" )
 curve( dgamma( x, shape = alpha_const2, rate = beta_const2 ), col = "blue", add = TRUE )
 curve( dgamma( x, shape = alpha_const1, rate = beta_const1 ), col = "purple", add = TRUE)
 curve( dgamma( x, shape = alpha, rate = beta100 ), col = "black", add = TRUE )
-legend( "topright", legend = c( "G(2,4)", "G(10,22)", "G(50,108)", "G(100,216)" ), 
+legend( "topright", legend = c( "G(2,32)", "G(10,159)", "G(50,796)", "G(100,1591)" ), 
         col = c("black", "purple", "blue","green"),
         lty = 1, box.lty = 2 )
 dev.off()
