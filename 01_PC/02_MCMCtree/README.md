@@ -29,7 +29,7 @@ done
 done
 ```
 
-Now, we will use the same approach we used to generate the pipelines to run `CODEML`. In this case, however, the bash scripts have been modified accordingly. You will find them in the [`scripts` directory](scripts), from where you will copy them onto the `main/scripts` directory that you will have alreay generated. 
+Now, we will use the same approach we used to generate the pipelines to run `CODEML`. In this case, however, the bash scripts have been modified accordingly. You will find them in the [`scripts` directory](scripts), from where you will copy them onto the `main/scripts` directory that you will have alreay generated.
 
 ```sh
 # Run from the `01_PC/02_MCMCtree/scripts`
@@ -153,7 +153,7 @@ grep 'MCMCtree_prior' */*sh
 
 Now, we will be able to run the scripts! You may want to open two terminals in each directory (i.e., `MCMCtree_prior` and `MCMCtree`) and simultaneously execute the two bash scripts:
 
-```sh 
+```sh
 # Run from `pipelines_MCMCtree_prior/CLK` dir on your local
 # PC. Please change directories until
 # you are there. Then run the following
@@ -180,7 +180,7 @@ chmod 775 *sh
 
 ## 2. Formatting the file structure to analyse the results
 
-We will create a results directory to analyse the `MCMCtree` output. 
+We will create a results directory to analyse the `MCMCtree` output.
 Now, we will leave the `main` directory and come back to the `01_PC/02_MCMCtree` directory.
 
 ```sh
@@ -225,6 +225,7 @@ cp ../../main/MCMCtree/$j/ILN/$i/*ctl posterior/$i/ILN/$j
 done
 done
 ```
+
 ## 3. Generating summary output files
 
 Now that we have the output files from the different MCMC runs in an organised file structure, we are ready to check the chains for convergence!
@@ -239,7 +240,6 @@ We are going to run the R script [`Calculate_ESS_posterior.R`](scripts/Calculate
 6. Calculate the effective sample size for all model parameters and check whether chain convergence has been reached.
 
 If all the checks above have been passed, then you are ready to concatenate the parameter values sampled across the chains that passed the filters. Once concatenated, the final tree topology with the mean time estimates can be generated. In order to do this, we will use the `Combine_MCMC_prior.sh` , `Combine_MCMC_GBM_posterior.sh`, and  `Combine_MCMC_ILN_posterior.sh` bash scripts. You can run them using the following commands:
-
 
 ```sh
 # Run from `01_PC/02_MCMCtree/scripts` dir on your local
@@ -298,7 +298,7 @@ sed -i 's/usedata..*/usedata\ \=\ 0/' p*/$i/mcmc_files_*/*ctl
 done
 ```
 
-> **NOTE**: Depending on the `MCMCtree` version, the commands below may not work!
+> **NOTE**: If the commands below do not work,  PAML v4.9h has this option implemented. If you are using the latest release of PAML and the commands below do not work, please raise an issue on [the PAML GitHub repository](https://github.com/abacus-gene/paml) regarding option `print = -1` for `MCMCtree`.
 
 Now, you are ready to run the control file inside `prior/1/mcmc_files_CLK`, `posterior/1/mcmc_files_GBM`, and `posterior/1/mcmc_files_ILN` to generate the final timetree! You should just navigate to these directories and execute `MCMCtree` using the command that you use on your PC. E.g.:
 
@@ -322,7 +322,6 @@ mcmctree *ctl
 
 And that should be it: you now have the final timetree under each relaxed-clock model!
 
-# EXERCISE (hard)
+## EXERCISE (hard)
 
 How would you now plot the effective prior versus the user-specified prior to make sure that there is no conflict between the calibrations specified by the user and the ones used by `MCMCtree`?
-

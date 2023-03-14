@@ -4,11 +4,11 @@ Before running `MCMCtree`, we need to calculate the gradient and the Hessian so 
 
 ## 1. Pick rate prior
 
-We will use a vague gamma distribution for the dataset considering the tree height (molecular distance in substitutions per site) and the divergence time at the root of the phylogeny (in time unit). As the [tree file in NEXUS](../../00_data/00_raw_data/tree_ML.nexus) format has information about the branhc lengths, we can load this file in `R` to estimate the tree height. We also have defined the root calibration in the calibrated tree file file that you just generated, which is a rough idea of the age of the root of the phylogeny based on the fossil record. This calibration suggests that the mean root age is 583 Myr (i.e., the first parameter of the ST distribution used to calibrate the root is $\alpha=5.83$, and so we can use either 583 Myr (time unit = 1 Myr) or 5.83 in 100 Myr time unit. 
+We will use a vague gamma distribution for the dataset considering the tree height (molecular distance in substitutions per site) and the divergence time at the root of the phylogeny (in time unit). As the [tree file in NEXUS format](../../00_data/00_raw_data/tree_ML.nexus) has information about the branch lengths, we can load this file in `R` to estimate the tree height. We also have defined the root calibration in the calibrated tree file that you just generated in the previous step, which can give us a rough idea of the age of the root of the phylogeny based on the fossil record. This calibration suggests that the mean root age is 583 Myr (i.e., the first parameter of the ST distribution used to calibrate the root is $\alpha=5.83$, and so we can use either 583 when time time unit is 1 Myr or 5.83 in 100 Myr time unit).
 
-By setting a vague shape ($\alpha=2$) for the gamma distribution, we can account for the uncertainty on the mean rate. If we had more knowledge on the mean rate, however, we should use a narrower prior with a larger $\alpha$ that better represents our prior information. 
+By setting a vague shape ($\alpha=2$) for the gamma distribution, we can account for the uncertainty about the mean evolutionary rate. If we were very sure about the estimated mean rate in our phylogeny, however, we should use a narrower prior distribution around the value of the mean rate by using a larger $\alpha$, and hence our prior on the rate would be more informative.
 
-Now, we have all the information we need to calculate the $\beta$ parameter for the Gamma distribution that will be the prior on the rate. We have written the [R script `calculate_rateprior.R`](scripts/calculate_rateprior.R) to carry out all the tasks mentioned above. You can open this file in RStudio to find out the value of $\beta$ and plot the final prior on the rates. A summary of what you will find in the script is described below:
+Now, we have all the information we need to calculate the $\beta$ parameter for the Gamma distribution that we will use as the prior on the rate. We have written the [R script `calculate_rateprior.R`](scripts/calculate_rateprior.R) to carry out all the tasks mentioned above. You can open this file on RStudio to find out the value of $\beta$ and plot the final prior on the rates. A summary of what you will find in the script is described below:
 
 ```text
 First, we know that the molecular distance (tree height, distance from the root to present time) is equal to the mean evolutionary rate (in substitutions per site per year) times the age of the divergence time at the root (in time unit, which we can define later). If we have estimated our phylogeny, and therefore have estimated the branch lengths, we will be able to estimate the tree height. The units of the tree height will be the following:
@@ -19,8 +19,8 @@ One way of estimating the tree height is by using the R function `phytools::node
 
 After estimating the tree height of our phylogeny (in subst/site) and considering the age of the root based on fossils (time unit = 1 Myr), we can get a rough estimate of the mean rate depending. We will calculate the mean rate using two different time units:
 
-a) Time unit = 1 Myr (mean root age in Myr)    --> mean_rate_1Myr = tree_height / root_age = (subst/site) / (Myr) = subst/site per time unit (time unit = 1 Myr = 10^6 years --> (subst/site)/10^6 years.
-b) Time unit = 100 Myr (mean root age in 100 Myr) --> mean_rate_100Myr = tree_height / root_age = (subst/site) / (Myr) =  subst/site per time unit (time unit = 100 Myr = 10^8 years --> (subst/site)/10^8 years
+* Time unit = 1 Myr (mean root age in Myr) --> mean_rate_1Myr = tree_height / root_age = (subst/site) / (Myr) = subst/site per time unit (time unit = 1 Myr = 10^6 years) --> (subst/site)/10^6 years.
+* Time unit = 100 Myr (mean root age in 100 Myr) --> mean_rate_100Myr = tree_height / root_age = (subst/site) / (Myr) =  subst/site per time unit (time unit = 100 Myr = 10^8 years) --> (subst/site)/10^8 years
 
 We also know that the mean of the gamma distribution is our parameter of interest: the mean evolutionary rate. Therefore:
 
@@ -28,17 +28,17 @@ mean_G = mean_rate = alpha / beta
 
 According to the two cases stated above:
 
-a) Time unit = 1 Myr: mean_rate_1Myr = alpha / beta --> beta = alpha / mean_rate = 2/mean_rate_1Myr  
-a) Time unit = 100 Myr: mean_rate_100Myr = alpha / beta --> beta = alpha / mean_rate = 2/mean_rate_100Myr
+* Time unit = 1 Myr: mean_rate_1Myr = alpha / beta --> beta = alpha / mean_rate = 2/mean_rate_1Myr  
+* Time unit = 100 Myr: mean_rate_100Myr = alpha / beta --> beta = alpha / mean_rate = 2/mean_rate_100Myr
 
 The beta parameter when time unit = 1 Myr is normally too large, so we shall focus on the mean rate calculated when time unit = 100 Myr. In that way, the calibrated tree should be in this time unit too (i.e., do not forget to scale the calibrations accordingly!). 
 ```
 
-If you run the [R script `calculate_rateprior.R`](scripts/calculate_rateprior.R), you will see how all the steps described above take place and a new PDF file with the prior distribution to be used will be generated in a new directory called `out_RData`.
+If you run the [R script `calculate_rateprior.R`](scripts/calculate_rateprior.R), you will see how all the steps described above take place and a new PDF file called `gamma_dists.pdf` is saved in a new directory called `out_RData`. This file shows a plot with the gamma distribution fixing `$\alpha=2$` and another plot with other gamma distributions with larger values of $\alpha$ that you could use if you felt that a narrower distribution around the estimated value for the mean rate is best to be used as a prior on the rate.
 
-As part of this tutorial, we have included a [template control file](control_files/prepbaseml.ctl) with the $\alpha$ and $\beta$ parameters (as defined using the R script above) for the gamma distribution as a prior on the rates. Note that several options will be subsequently modified to fit the analysis with this dataset (i.e., you will see some options that have flags in capital letters, which will be replaced with the correct value for said option).
+As part of this tutorial, we have included a [template control file](control_files/prepbaseml.ctl) with the $\alpha$ and $\beta$ parameters (as defined using the R script above) for the gamma distribution as a vague prior on the rates. Note that several options will be subsequently modified to fit the analysis with this dataset (i.e., you will see some options that have flags in capital letters, which will be replaced with the correct value for said option).
 
-Please note that, if you are adapting this tutorial to analyse a different dataset, you should change the options of the control file to fir your dataset. E.g.:
+Please note that, if you are adapting this tutorial to analyse a different dataset, you should change the options of the control file to fit your dataset. E.g.:
 
 * Adjust `ndata` to the number of alignment blocks (i.e., amount of data partitions) in your alignment file.
 * Adjust the prior on the rate, `rgene_gamma`, according to the value of $\alpha$ and $\beta$ that you have calculated following the steps above.
@@ -46,9 +46,9 @@ Please note that, if you are adapting this tutorial to analyse a different datas
 
 ## 2. Set up the file structure
 
-Before running `MCMCtree` using the approximate likelihood calculation to speed up timetree inference, we first need to calculate the gradient and the Hessian. We will use `BASEML` for this purpose! 
+Before running `MCMCtree` using the approximate likelihood calculation to speed up timetree inference, we first need to calculate the gradient and the Hessian. We will use `BASEML` for this purpose!
 
-The file structure we will use is the following:
+The file structure we will use in the HPC (where you will run the heavy computational tasks) is the following:
 
 ```text
 main/
@@ -113,7 +113,7 @@ cd ../../01_PC/01_Hessian/control_files
 cp *ctl ../../../main/control_files
 ```
 
-While the alignment file, the tree files, and the the control file (with the already correct prior on the rates, MCMC settings, and flags to later replace with the correct values) have already been generated and only need to be copied onto their corresponding directories as shown above, we need to generate other input files to estimate the Hessian and the gradient: the input control files for `BASEML`. 
+While the alignment file, the tree files, and the the control file (with the already correct prior on the rates, MCMC settings, and flags to later replace with the correct values) have already been generated and only need to be copied onto their corresponding directories as shown above, we need to generate other input files to estimate the Hessian and the gradient: the input control files for `BASEML`.
 
 To do this in a reproducible manner, you can use the [script `generate_prepbaseml.sh`](scripts/generate_prepbaseml.sh), which you can find in the [`01_PC/01_Hessian/scripts` directory](scripts). You should copy this bash script in the `main/scripts` directory previously created:
 
