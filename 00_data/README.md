@@ -25,7 +25,7 @@ namefa=$( echo $name | sed 's/\.fa//' )
 mv $onefa $namefa.fasta
 ```
 
-After running the code snippet above, you will see that a new FASTA file called `raw_aln.fasta` has been generate in the [`00_raw_data` directory](00_data/00_raw_data) with the format we wanted: one sequence per line. Now, we just need to run [another in-house PERL script called `FASTAtoPHYL.pl`](scripts/FASTAtoPHYL.pl), which will convert this newly generated alignment file from FASTA into PHYLIP format:
+After running the code snippet above, you will see that a new FASTA file called `raw_aln.fasta` has been generate in the [`00_raw_data` directory](00_raw_data) with the format we wanted: one sequence per line. Now, we just need to run [another in-house PERL script called `FASTAtoPHYL.pl`](scripts/FASTAtoPHYL.pl), which will convert this newly generated alignment file from FASTA into PHYLIP format:
 
 ```sh
 # You should still be inside `00_data/00_raw_data`
