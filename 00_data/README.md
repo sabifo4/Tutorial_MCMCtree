@@ -11,7 +11,7 @@ In this tutorial, we will use [an example dataset](00_raw_data) to see how we ca
 
 Inside the directory where this `README.md` file is, you can find a subdirectory called [`00_raw_data`](00_raw_data) with the example alignment and tree files aforementioned.
 
-If you open the [alignment file](00_raw_data/raw_aln.fa), you will see that each aligned sequence is not in a unique line, which sometimes makes it more difficult to parse the file. The first thing that we will do now is to run [an in-house PERL script called `one_line_fasta.pl`](scripts/one_line_fasta.pl) to convert the `raw_aln.fa` FASTA file in a FASTA file in which all sequences are written in one line:
+If you open [the alignment file](00_raw_data/raw_aln.fa), you will see that each aligned sequence is not in a unique line, which sometimes makes it more difficult to parse the file. The first thing that we will do now is to run [an in-house PERL script called `one_line_fasta.pl`](scripts/one_line_fasta.pl) to convert the `raw_aln.fa` FASTA file in a FASTA file in which all sequences are written in one line:
 
 ```sh
 # Run the next commands from the 
@@ -25,7 +25,7 @@ namefa=$( echo $name | sed 's/\.fa//' )
 mv $onefa $namefa.fasta
 ```
 
-After running the code snippet above, you will see that a new FASTA file called `raw_aln.fasta` has been generate in the [`00_raw_data` directory](00_raw_data) with the format we wanted: one sequence per line. Now, we just need to run [another in-house PERL script called `FASTAtoPHYL.pl`](scripts/FASTAtoPHYL.pl), which will convert this newly generated alignment file from FASTA into PHYLIP format:
+After running the code snippet above, you will see that a new FASTA file called `raw_aln.fasta` has been generate in [the `00_raw_data` directory](00_raw_data) with the format we wanted: one sequence per line. Now, we just need to run [another in-house PERL script called `FASTAtoPHYL.pl`](scripts/FASTAtoPHYL.pl), which will convert this newly generated alignment file from FASTA into PHYLIP format:
 
 ```sh
 # You should still be inside `00_data/00_raw_data`
@@ -41,13 +41,13 @@ mkdir ../01_inp_data
 mv $a_noext.phy ../01_inp_data
 ```
 
-You will now see a new directory called `01_inp_data` inside the `00_data`. If you navigate to this newly created `01_inp_data` directory, you will find the alignment in PHYLIP format (i.e., the input file we need!). You will also find a log file called `log_lenseq.txt` inside the [`00_raw_data` directory](00_raw_data) where you can read how many taxa were parsed and the length of the sequence.
+You will now see a new directory called `01_inp_data` inside the `00_data`. If you navigate to this newly created `01_inp_data` directory, you will find the alignment in PHYLIP format (i.e., the input file we need!). You will also find a log file called `log_lenseq.txt` inside [the `00_raw_data` directory](00_raw_data) where you can read how many taxa were parsed and the length of the sequence.
 
 The alignment is now in the correct format, so we can start to parse the tree file!
 
 ## Tree file
 
-If the calibrated input tree is in NEXUS format, as in this [example dataset](00_raw_data/tree_ML.nexus), we can use bash scripting to easily convert this file into Newick format. To process the example tree file, please run the following commands:
+If the calibrated input tree is in NEXUS format, as in [this example dataset](00_raw_data/tree_ML.nexus), we can use bash scripting to easily convert this file into Newick format. To process the example tree file, please run the following commands:
 
 ```sh
 # You should still be inside `00_data/00_raw_data`
