@@ -25,7 +25,7 @@ namefa=$( echo $name | sed 's/\.fa//' )
 mv $onefa $namefa.fasta
 ```
 
-After running the code snippet above, you will see that a new FASTA file called `raw_aln.fasta` has been generate in the [`00_raw_data` directory`](00_data/00_raw_data) with the format we wanted: one sequence per line. Now, we just need to run [another in-house PERL script called `FASTAtoPHYL.pl`](scripts/FASTAtoPHYL.pl), which will convert this newly generated alignment file from FASTA into PHYLIP format:
+After running the code snippet above, you will see that a new FASTA file called `raw_aln.fasta` has been generate in the [`00_raw_data` directory](00_data/00_raw_data) with the format we wanted: one sequence per line. Now, we just need to run [another in-house PERL script called `FASTAtoPHYL.pl`](scripts/FASTAtoPHYL.pl), which will convert this newly generated alignment file from FASTA into PHYLIP format:
 
 ```sh
 # You should still be inside `00_data/00_raw_data`
@@ -41,13 +41,13 @@ mkdir ../01_inp_data
 mv $a_noext.phy ../01_inp_data
 ```
 
-You will now see a new directory called `01_inp_data` inside the [`00_data` directory](00_data). If you navigate to this `01_inp_data`, you will find the alignment in PHYLIP format (i.e., the input file we need!). You will also find a log file called `log_lenseq.txt` inside the [`00_raw_data` directory](00_raw_data) where you can read how many taxa were parsed and the length of the sequence.
+You will now see a new directory called `01_inp_data` inside the `00_data`. If you navigate to this newly created `01_inp_data` directory, you will find the alignment in PHYLIP format (i.e., the input file we need!). You will also find a log file called `log_lenseq.txt` inside the [`00_raw_data` directory](00_raw_data) where you can read how many taxa were parsed and the length of the sequence.
 
 The alignment is now in the correct format, so we can start to parse the tree file!
 
 ## Tree file
 
-If the calibrated input tree is in [NEXUS format](00_raw_data/tree_ML.nexus), as in this example, we can use bash scripting to easily convert this file into Newick format. To process the example tree file, please run the following commands:
+If the calibrated input tree is in NEXUS format, as in this [example dataset](00_raw_data/tree_ML.nexus), we can use bash scripting to easily convert this file into Newick format. To process the example tree file, please run the following commands:
 
 ```sh
 # You should still be inside `00_data/00_raw_data`
@@ -86,4 +86,4 @@ sed -i 's/'\"'/'\''/g' ../01_inp_data/$t_noext"_calib.tree"
 
 ---
 
-Now, you are ready to move onto the next step: [calculating the Hessian and the gradient!](../01_analyses/01_Hessian).
+Now, you are ready to move onto the next step: [calculating the Hessian and the gradient!](../01_analyses/01_Hessian)
