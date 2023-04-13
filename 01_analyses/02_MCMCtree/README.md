@@ -232,7 +232,7 @@ We are going to run the R script [`MCMC_diagnostics_prior.R`](scripts/MCMC_diagn
 5. Generate a new convergence plot with those chains that passed filters.
 6. Calculate the effective sample size for all model parameters and check whether chain convergence has been reached with the chains that have passed filters.
 
-The MCMC diagnostics did not find any of the chains problematic (run script [`MCMC_diagnostics_prior.R](scripts/MCMC_diagnostics_prior.R)). Therefore, we used an in-house bash script, [`Combine_MCMC.sh`](scripts/Combine_MCMC.sh), to concatenate all the `mcmc.txt` files for the 2 chains in a unique file.
+The MCMC diagnostics did not find any of the chains problematic (run script [`MCMC_diagnostics_prior.R`](scripts/MCMC_diagnostics_prior.R)). Therefore, we used an in-house bash script, [`Combine_MCMC.sh`](scripts/Combine_MCMC.sh), to concatenate all the `mcmc.txt` files for the 2 chains in a unique file.
 
 ```sh
 # Run from `02_MCMCtree/scripts`
@@ -281,7 +281,7 @@ mv FigTree.tre FigTree_CLK.tree
 cd $base_dir
 ```
 
-The next step is to plot the user-specified prior VS the effective prior. We have written the R script [`Check_priors_effVSuser.R](scripts/Check_priors_effVSuser.R) to generate these plots. Once this script has finished, you will see that a new directory `plots/effVSuser/ex_data` will have been created. Inside this directory, you will find one directory for each individual dataset with indiviudal plots for each node. In addition, all these plots have been merged into a unique document as well (note: some plots may be too small to see for each node, hence why we have generated individual plots).
+The next step is to plot the user-specified prior VS the effective prior. We have written the R script [`Check_priors_effVSuser.R`](scripts/Check_priors_effVSuser.R) to generate these plots. Once this script has finished, you will see that a new directory `plots/effVSuser/exdata` will have been created. Inside this directory, you will find one directory for each individual dataset with indiviudal plots for each node. In addition, all these plots have been merged into a unique document as well (note: some plots may be too small to see for each node, hence why we have generated individual plots).
 
 Now, once the MCMC diagnostics have finished, you can extract the final data that you can use to write a manuscript as it follows:
 
