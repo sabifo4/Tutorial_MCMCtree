@@ -11,11 +11,11 @@ In this tutorial, we will use [an example dataset](00_raw_data) to see how we ca
 
 Inside the directory where this `README.md` file is, you can find a subdirectory called [`00_raw_data`](00_raw_data) with the example alignment and tree files aforementioned.
 
-If you open the [alignment file](00_raw_data/raw_aln.fa), you will see that each aligned sequence is not in a unique line, which sometimes makes it more difficult to parse the file. The first thing that we will do now is to run [an in-house PERL script](scripts/one_line_fasta.pl) that will format the file so that the lines that have sequence data for the same species can be found in a unique line (i.e., one line per sequence):
+If you open the [alignment file](00_raw_data/raw_aln.fa), you will see that each aligned sequence is not in a unique line, which sometimes makes it more difficult to parse the file. The first thing that we will do now is to run [an in-house PERL script called `one_line_fasta.pl`](scripts/one_line_fasta.pl) to convert the `raw_aln.fa` FASTA file in a FASTA file in which all sequences are written in one line:
 
 ```sh
 # Run the next commands from the 
-# `00_data`directory
+# `00_data` directory
 cd 00_raw_data
 name=`ls *fa`
 printf "Converting "$name" into a one-line FASTA file\n"
@@ -25,7 +25,7 @@ namefa=$( echo $name | sed 's/\.fa//' )
 mv $onefa $namefa.fasta
 ```
 
-You will see that a new FASTA file called `raw_aln.fasta` has been generated with the format we wanted: one sequence per line. Now, we just need to run [another in-house PERL script](scripts/FASTAtoPHYL.pl) that will convert this newly generated FASTA file into PHYLIP format:
+After running the code snippet above, you will see that a new FASTA file called `raw_aln.fasta` has been generate in the [`00_raw_data` directory`](00_data/00_raw_data) with the format we wanted: one sequence per line. Now, we just need to run [another in-house PERL script called `FASTAtoPHYL.pl`](scripts/FASTAtoPHYL.pl), which will convert this newly generated alignment file from FASTA into PHYLIP format:
 
 ```sh
 # You should still be inside `00_data/00_raw_data`
@@ -41,7 +41,7 @@ mkdir ../01_inp_data
 mv $a_noext.phy ../01_inp_data
 ```
 
-A new directory called `01_inp_data` will be created and, inside this directory, you will now find the alignment in PHYLIP format (i.e., the input file in the format we need!). You will also find a log file called `log_lenseq.txt` inside the [`00_raw_data`](00_raw_data) directory where you can see how many taxa were parsed and the length of the sequence.
+You will now see a new directory called `01_inp_data` inside the [`00_data` directory](00_data). If you navigate to this `01_inp_data`, you will find the alignment in PHYLIP format (i.e., the input file we need!). You will also find a log file called `log_lenseq.txt` inside the [`00_raw_data` directory](00_raw_data) where you can read how many taxa were parsed and the length of the sequence.
 
 The alignment is now in the correct format, so we can start to parse the tree file!
 
@@ -81,9 +81,9 @@ sed -i 's/B([0-9]*\.[0-9]*,[0-9]*\.[0-9]*)//g' ../01_inp_data/$t_noext"_uncalib.
 sed -i 's/'\"'/'\''/g' ../01_inp_data/$t_noext"_calib.tree" 
 ```
 
-> **NOTE 1**: If you decide to later adapt this tutorial to analyse a different dataset, please check the `sed` commands and adapt them to the format and the content of your tree file/s. Perhaps, there is a branch length or a calibration that has not been yet removed by any of the regex used above as your file/s may have different characters (e.g., the `sed` commands used above do not remove `-`, characters that may be found if you have type of calibrations in your tree file/s such as low bounds, etc.). Before moving onto the next step, please open the tree file generated at the end of this section with your preferred text editor and/or with your preferred graphical software to visualise the edited phylogeny (e.g., `FigTree`) and make sure that there are no issues and the final tree file does not include branch lengths, calibrations, or other labels. In other words, the `*_uncalib.tree` file should **only** include the tree topology in Newick format. Only the topology + calibrations (no branch lengths!) should be available in the `*_calib.tree` file (file with calibrated tree).
-> **NOTE 2**: We have covered a specific formatting example (i.e., from NEXUS to Newick) as it tends to be the most common format conversion when adapting tree files for different analyses. Nevertheless, other format conversions may be required. Please let us know if you would like to see other data conversions as we are working on other tutorials that could complement this one.
+> **NOTE 1**: If you decide to later adapt this tutorial to analyse a different dataset, please check the `sed` commands used in the code snippet above to generate the uncalibrated trees. Perhaps, there is a branch length or a calibration that has not been yet removed in your tree file/s by any of the regex used above as you may have included different characters (e.g., the `sed` command has not targeted `-`, other type of calibrations such as low bounds, etc.). Before moving onto the next step, please open the tree file with your preferred text editor such as `FigTree` or `TreeViewer` (or your preferred graphical software to visualise the edited phylogeny) and make sure that (i) there are no issues and that (ii) the final tree has no branch lengths, calibrations, or other labels. In other words, you should make sure that the `*_uncalib.tree` file **only** includes the tree topology in Newick format. The topology + calibrations (no branch lengths!) should be available **only** in the `*_calib.tree` file (i.e., file with the calibrated tree).
+> **NOTE 2**: We have covered a specific formatting example (i.e., from NEXUS to Newick) as it tends to be the most common for tree files. Nevertheless, other format conversions may be required. Please let us know if you would like to see other data conversions as we are working on other tutorials that could complement this one.
 
 ---
 
-Now, you are ready to move onto the next step: [calculating the Hessian and the gradient!](../01_PC/01_Hessian).
+Now, you are ready to move onto the next step: [calculating the Hessian and the gradient!](../01_analyses/01_Hessian).
