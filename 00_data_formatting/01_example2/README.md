@@ -92,7 +92,7 @@ In essence, the previous script has formatted the FASTA files and renamed them i
 * `conc`: all the genes here will be concatenated in a unique alignment ordered from slow- to fast-evolving.
 * `partY`: for each partition, an alignment will be generated with the corresponding genes ordered from slow- to fast-evolving. In that way, there will be one alignment for all the genes under directory `part1`, another for those under directory `part2`, etc. Then, we will concatenate them in a unique alignment file, which will be the partitioned alignment file.
 
-Now, we can use the [`fasta-phylip-partitions`](https://github.com/sabifo4/fasta-phylip-partitions) pipeline to generate the final "main" alignments with the following code snippet. To make things easier, we have included this pipeline in [the `src` directory in this repository too](../../src/fpp) without examples to save space:
+Now, we can use the [`fasta-phylip-partitions`](https://github.com/sabifo4/fasta-phylip-partitions) pipeline to generate the final "main" alignments with the following code snippet. To make things easier, we have included this pipeline in [the `src` directory in this repository too](../../src/fasta-phylip-partitions) without examples to save space:
 
 ```sh
 # Run from `01_example2` and set curr dir
@@ -106,8 +106,8 @@ curr_dir=$( pwd )
 # The `species_names.txt` file is very important for the pipeline to work, so 
 # do NOT change this file name! We will also give permissions to the tool!
 cp $home_dir/00_raw_data/species_names.txt $curr_dir/
-chmod 775 ../../../src/fpp/src/Run_tasks.sh
-chmod 775 ../../../src/fpp/src/Tools/*
+chmod 775 ../../../src/fasta-phylip-partitions/src/Run_tasks.sh
+chmod 775 ../../../src/fasta-phylip-partitions/src/Tools/*
 # Loop over each directory to obtain individual concatenated
 # alignments for each specific partition
 for i in */    # `conc`, `part1`, `part2`, `part3`, `part4`
@@ -127,7 +127,7 @@ printf "\n\n[[ PARSING GENES IN DIR "$name_dir" ]]\n\n"
 # command below again.
 cd $curr_dir/$name_dir 
 cp $curr_dir/species_names.txt .
-../../../../src/fpp/src/Run_tasks.sh . ex2_$name_dir partY
+../../../../src/fasta-phylip-partitions/src/Run_tasks.sh . ex2_$name_dir partY
 done
 # Move back to $curr_dir and remove copy of `species_names.txt` file
 cd $curr_dir
