@@ -1,5 +1,7 @@
 # MCMCtree tutorial
 
+**DISCLAIMER**: This tutorial is based on a phylgenetics tool that I am working on at the moment, which I am still developing and is yet to be published. While some of the scripts that you will find here have been validated and used in published research ([Álvarez-Carretero et al., 2022](https://doi.org/10.1038/s41586-021-04341-1)), I am implementing new features as part of the current workflow of this pipeline as well as developing new tools. In other words, the code is not stable. If you want to use the tools that I have developed as part of this tutorial/pipeline, please first contact me at <a href="mailto:sandra.ac93@gmail.com"><b>sandra.ac93@gmail.com</b></a>. Thank you :)
+
 ## Introduction
 
 In this repository, you will find step-by-step guidelines to run `MCMCtree` using the approximate likelihood.
