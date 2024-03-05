@@ -1,1 +1,18 @@
-#main
+z_old
+# Do not sync files that are generated as part of the tutorial
+## Data formatting
+00_data_formatting/00_raw_data/alignment/log_lenseq.txt
+00_data_formatting/00_raw_data/alignment/raw_aln.fasta
+00_data_formatting/00_raw_data/trees/example_fordisplay_calib_MCMCtree.tree
+00_data_formatting/00_raw_data/trees/cals_only_example.tree
+00_data_formatting/01_inp_data
+## PAML-BASEML
+01_PAML/00_BASEML/out_RData
+## PAML-MCMCtree
+01_PAML/01_MCMCtree/dummy_aln
+01_PAML/01_MCMCtree/calib_files
+01_PAML/01_MCMCtree/out_RData
+01_PAML/01_MCMCtree/plots
+01_PAML/01_MCMCtree/sum_*
+## Main `example_dating` directory (local PC)
+example_dating
