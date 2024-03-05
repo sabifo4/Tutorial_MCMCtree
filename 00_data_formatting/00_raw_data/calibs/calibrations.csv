@@ -1,0 +1,3 @@
+name;leaf1;leaf2;minage;mintail;maxage;maxtail;MCMCtree
+int_calib;sp2;sp3;;;;;'B(5.14,6.361,1e-300,0.025)'
+root_calib;sp1;sp4;;;;;'ST(5.83,0.059,0.112,109.124)'
