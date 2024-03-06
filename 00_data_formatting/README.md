@@ -35,7 +35,7 @@ len=$( sed -n '2,2p' $aln_name | sed 's/\r//' | sed 's/\n//' | wc --m )
 perl ../../../src/FASTAtoPHYL.pl $aln_name $num $len 
 # Create a directory for input data for `MCMCtree`
 mkdir ../../01_inp_data
-mv $a_noext.phy ../01_inp_data/example_aln.phy
+mv $a_noext.phy ../../01_inp_data/example_aln.phy
 ```
 
 You will see a new directory called `01_inp_data` inside [`00_data_formatting`](README.md) directory. If you navigate to this newly created directory, you will find the alignment in PHYLIP format (i.e., the input file we need!). You will also find a log file called `log_lenseq.txt` inside [the `alignment` directory](00_raw_data/alignment/) where you can read how many taxa were parsed and the length of the sequences.

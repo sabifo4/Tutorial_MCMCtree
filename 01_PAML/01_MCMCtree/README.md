@@ -384,7 +384,7 @@ qsub pipeline_ILN.sh
 ./pipeline_GBM.sh &
 cd ../ILN
 chmod 775 *sh
-qsub pipeline_ILN.sh &
+./pipeline_ILN.sh &
 ```
 
 ### Setting the file structure to analyse `MCMCtree` output - posterior
