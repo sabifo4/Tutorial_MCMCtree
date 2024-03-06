@@ -279,5 +279,5 @@ sum_post_QC$example_ILN$ESS_results
 # $total_samples
 # [1] 120006      3
 length( sum_post_QC$example_ILN$not_conv_nodes ) # 0
-sum_post_QC$example_ILN$num_chains # 16
+sum_post_QC$example_ILN$num_chains # 6
 

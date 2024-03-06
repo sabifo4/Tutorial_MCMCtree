@@ -17,7 +17,7 @@ setwd( wd )
 # LOAD OBJECTS #
 #--------------#
 # Get tree topology so that we can get the taxa names
-tt <- ape::read.tree( file = "../../00_data_formatting/01_inp_data/tree_uncalib.tree" )
+tt <- ape::read.tree( file = "../../00_data_formatting/01_inp_data/tree_example_uncalib.tree" )
 
 #-------#
 # TASKS #

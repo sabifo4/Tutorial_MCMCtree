@@ -331,15 +331,8 @@ sed -i 's/TREE/'${sed_tt}'/' *ctl
 # Then, rename the output tree file so we can easily identify later which tree belongs to
 # which dataset easier
 mcmctree *ctl
-mv FigTree.tre FigTree_${name_dat[count]}"_CLK_95HPD.tree"
-tmp_tt=$( echo tree_${name_dat[count]}"_uncalib.tree" )
-cp $tt_dir/$tmp_tt dummy_cal.tree
-cp mcmctree_dummy.ctl mcmctree_dummy_95CI.ctl
-sed -i 's/treefile..*/treefile\ \=\ dummy\_cal\.tree/' mcmctree_dummy_95CI.ctl
-sed -i "s/\;/\'ST\(5\.83\,0\.059\,0\.112\,109\.124\)\'\;/" dummy_cal.tree
-mcmctree49h_sum95CI *ctl mcmctree_dummy_95CI.ctl
+mv FigTree.tre FigTree_${name_dat[count]}"_CLK.tree"
 printf "\n"
-mv FigTree.tre FigTree_${name_dat[count]}"_CLK_95CI.tree"
 cd $base_dir
 done
 ```
@@ -508,14 +501,7 @@ sed -i 's/TREE/'${sed_tt}'/' *ctl
 # Then, rename the output tree file so we can easily identify later which tree belongs to
 # which dataset easier
 mcmctree *ctl
-mv FigTree.tre FigTree_${name_dat[count]}"_GBM_95HPD.tree"
-tmp_tt=$( echo tree_${name_dat[count]}"_uncalib.tree" )
-cp $tt_dir/$tmp_tt dummy_cal.tree
-cp mcmctree_dummy.ctl mcmctree_dummy_95CI.ctl
-sed -i 's/treefile..*/treefile\ \=\ dummy\_cal\.tree/' mcmctree_dummy_95CI.ctl
-sed -i "s/\;/\'B\(5\.14\,6\.361\,1e\-300\,0\.025\)\'\;/" dummy_cal.tree
-mcmctree49h_sum95CI mcmctree_dummy_95CI.ctl
-mv FigTree.tre FigTree_${name_dat[count]}"_GBM_95CI.tree"
+mv FigTree.tre FigTree_${name_dat[count]}"_GBM.tree"
 printf "\n"
 cd $base_dir/mcmc_files_${name_dat[count]}"_ILN"
 printf "[[ Generating tree file for concatenated \"mcmc.txt\" in "$data"/"$i" for ILN ... ... ]]\n"
@@ -530,14 +516,7 @@ sed -i 's/TREE/'${sed_tt}'/' *ctl
 # Then, rename the output tree file so we can easily identify later which tree belongs to
 # which dataset easier
 mcmctree *ctl
-mv FigTree.tre FigTree_${name_dat[count]}"_ILN_95HPD.tree"
-tmp_tt=$( echo tree_${name_dat[count]}"_uncalib.tree" )
-cp $tt_dir/$tmp_tt dummy_cal.tree
-cp mcmctree_dummy.ctl mcmctree_dummy_95CI.ctl
-sed -i 's/treefile..*/treefile\ \=\ dummy\_cal\.tree/' mcmctree_dummy_95CI.ctl
-sed -i "s/\;/\'B\(5\.14\,6\.361\,1e\-300\,0\.025\)\'\;/" dummy_cal.tree
-mcmctree49h_sum95CI mcmctree_dummy_95CI.ctl
-mv FigTree.tre FigTree_${name_dat[count]}"_ILN_95CI.tree"
+mv FigTree.tre FigTree_${name_dat[count]}"_ILN.tree"
 printf "\n"
 cd $base_dir
 done
