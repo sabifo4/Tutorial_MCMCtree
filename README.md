@@ -110,7 +110,7 @@ Before you start this practical session, please make sure you have the following
 
 If you have gone through the previous sections, have a clear understanding of the how this repository is organised, and have installed the required software... Then you are ready to go!
 
-You can start the tutorial by jumping on the [`00_data_formatting` directory](00_data_formatting), choose the `README.md` file that aligns with your OS, and...
+You can start the tutorial by jumping to the [`00_data_formatting` directory](00_data_formatting), choose the `README.md` file that aligns with your OS, and...
 
 Happy timetree inference! :)
 
