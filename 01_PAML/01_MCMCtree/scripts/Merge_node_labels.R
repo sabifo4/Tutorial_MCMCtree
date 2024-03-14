@@ -57,13 +57,13 @@ for( i in 1:length(dat) ){
   write( x = "Calib;node;Prior", file = paste( "../calib_files/Calibnodes_",
                                                dat[i], ".csv", sep = "" ) )
   write( x = "Calib;node;Prior", file = paste( "../calib_files/Calibnodes_",
-                                               dat[i], "_effVSuser.csv",
+                                               dat[i], "_margVScal.csv",
                                                sep = "" ) )
 }
 # Now, populate the output file with the info for the rest of the nodes
 for( j in 1:length(dat) ){
   # Start counter to see if that file has been created or not
-  count_effvsuser <- 0
+  count_calVSmarg <- 0
   cat( "\n\n[[ Evaluating tree for dataset ", dat[j], " ]]\n" )
   for( i in 1:length( tt_list[[ j ]][[ 2 ]]$node.label ) ){
     
@@ -81,8 +81,8 @@ for( j in 1:length(dat) ){
         write( x = paste( tmp_name, ";", tt_list[[ j ]][[ 1 ]]$node.label[i],
                           ";", tmp_dist, sep = "" ), 
                file = paste( "../calib_files/Calibnodes_", dat[j], 
-                             "_effVSuser.csv", sep = "" ), append = TRUE )
-        count_effvsuser <- count_effvsuser + 1
+                             "_margVScal.csv", sep = "" ), append = TRUE )
+        count_calVSmarg <- count_calVSmarg + 1
       }
       cat( paste( tmp_name, ";", tt_list[[ j ]][[ 1 ]]$node.label[i], ";", tmp_dist, "\n",
                   sep = "" ) )
@@ -94,8 +94,8 @@ for( j in 1:length(dat) ){
     
   }
   # Remove second csv if not needed
-  if( count_effvsuser == 0 ){
-    unlink( x = paste( "../calib_files/Calibnodes_", dat[j], "_effVSuser.csv",
+  if( count_calVSmarg == 0 ){
+    unlink( x = paste( "../calib_files/Calibnodes_", dat[j], "_calVSmarg.csv",
                        sep = "" ) )
   }
   

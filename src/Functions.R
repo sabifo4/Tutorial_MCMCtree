@@ -743,7 +743,7 @@ read_calib_f <- function( main_dir, f_names, dat, head_avail = TRUE )
   
 }
 
-# Function to plot the user-specified prior VS the effective prior used by `MCMCtree`
+# Function to plot the calibration density VS the marginal density used by `MCMCtree`
 #
 # Parameters
 #
@@ -766,14 +766,14 @@ plot_check_calibnodes <- function( calibs, divt_list, dat, main_wd,
   if( ! dir.exists( paste( main_wd, "plots", sep = "" ) ) ){
     dir.create( paste( main_wd, "plots", sep = "" ) )
   }
-  if( ! dir.exists( paste( main_wd, "plots/effVSuser/", dat,  sep = "" ) ) ){
-    dir.create( paste( main_wd, "plots/effVSuser/", dat, sep = "" ) )
+  if( ! dir.exists( paste( main_wd, "plots/calVSmarg/", dat,  sep = "" ) ) ){
+    dir.create( paste( main_wd, "plots/calVSmarg/", dat, sep = "" ) )
   }
   
   # In case users have not passed a string of length 3, just get the first three
   # letters
   tmp_dat_dir <- substr( x = dat, start = 1, stop = 3 )
-  png( filename = paste( main_wd, "plots/effVSuser/", dat, "/", out, "_",
+  png( filename = paste( main_wd, "plots/calVSmarg/", dat, "/", out, "_",
                          tmp_dat_dir, "_", clock,".jpg", sep = "" ),
          width = 1024, height = 768 )
   
@@ -888,7 +888,7 @@ plot_check_calibnodes <- function( calibs, divt_list, dat, main_wd,
       tmp_y   <- upperbounds( t = tmp_x, tU = tmp_max, pU = tmp_pU )
       tmp_labcab <- substr( x = calibs[i,1], start = 1, stop = 12 )
     }
-    # 2. Plot user-specified prior VS effective prior used by MCMCtree
+    # 2. Plot calibration density VS marginal density used by MCMCtree
     
     # 2.1. Find limit axis
     max_x_chain <- round( max( density( divt_list[[ 1 ]][,tmp_node] )$x ) + 0.5 )
@@ -924,10 +924,10 @@ plot_check_calibnodes <- function( calibs, divt_list, dat, main_wd,
     title( main = colnames( divt_list[[ 1 ]] )[tmp_node], 
            line = -2.7, sub = tmp_labcab, cex.main = 1.3, cex.sub = 0.7, adj = 0.9 )
     if ( ind == TRUE ){
-      if( ! dir.exists( paste( main_wd, "plots/effVSuser/", dat, "/ind", sep = "" ) ) ){
-        dir.create( paste( main_wd, "plots/effVSuser/", dat, "/ind", sep = "" ) )
+      if( ! dir.exists( paste( main_wd, "plots/calVSmarg/", dat, "/ind", sep = "" ) ) ){
+        dir.create( paste( main_wd, "plots/calVSmarg/", dat, "/ind", sep = "" ) )
       }
-      png( filename = paste( main_wd, "plots/effVSuser/",  dat, "/ind/CheckUSPvsEP_tn", 
+      png( filename = paste( main_wd, "plots/calVSmarg/",  dat, "/ind/CheckUSPvsEP_tn", 
                              calibs[i,2], "_", calibs[i,1], ".png", sep = "" ),
            width = 1024, height = 768 )
       
@@ -953,7 +953,7 @@ plot_check_calibnodes <- function( calibs, divt_list, dat, main_wd,
       }
       title( main = colnames( divt_list[[ 1 ]] )[tmp_node], 
              line = -20, sub = tmp_labcab, cex.main = 3, cex.sub = 2, adj = 0.9 )
-      info.legend <- c( "User-specified prior", "Effective prior" )
+      info.legend <- c( "Calibration density", "Marginal density" )
       col.legend  <- c( "blue", "black" )
       legend( "topright", legend = info.legend, col = col.legend,
               lty = 1, bty = 'n', cex = 2 )
@@ -962,8 +962,8 @@ plot_check_calibnodes <- function( calibs, divt_list, dat, main_wd,
   }
   
   plot( x = 1, y = 1, col = "white", xaxt = "n", yaxt = "n", xlab = '', ylab = '' )
-  info.legend <- c( "User-specified prior",
-                    "Effective prior" )
+  info.legend <- c( "Calibration density",
+                    "Marginal density" )
   col.legend  <- c( "blue", "black" )
   #coords.plot <- locator()
   legend( "top", legend = info.legend, col = col.legend,
@@ -1538,20 +1538,19 @@ add_node_const <- function( tt, calibrations, out_name, out_dir_raw, out_dir_inp
   # Generate empty vector with as many entries as nodes in the tree
   tt$node.label <- rep( NA, tt$Nnode )
   for( i in 1:length(rownames(calibrations)) ){
-    ##>> NOT DONE ANYMORE, WRONG FORMAT WHEN WRITING OUT
     ## Build MCMCtree calib
     ind_nas  <- which( calibrations[i,] == "" )
-    if( ind_nas == 8 && length( ind_nas ) == 1 ){ # if soft bound
+    if( c(8,9,10) %in% ind_nas && length( ind_nas ) == 1 ){ # if B calib
       node_lab <- paste( "'B(", calibrations[i,4], ",",
                          calibrations[i,6], ",", calibrations[i,5],
                          ",", calibrations[i,7], ")'", sep = "" )
     }else if( length( ind_nas ) == 3 ){ # col8 + two cols for U or L
       # if lower bounds missing, then it is an upper bound calib
-      if( ind_nas == 4 || ind_nas == 5 ){
+      if( 4 %in% ind_nas || 5 %in% ind_nas ){
         node_lab <- paste( "'U(", calibrations[i,6], ",",
                            calibrations[i,7], ")'", sep = "" )
       } # if upper bounds missing, then it is a lower bound calib
-      else if( ind_nas == 6 || ind_nas == 7 ){
+      else if( 6 %in% ind_nas || 7 %in% ind_nas ){
         node_lab <- paste( "'L(", calibrations[i,4], ",",
                            calibrations[i,5], ")'", sep = "" )
       }
@@ -1559,7 +1558,8 @@ add_node_const <- function( tt, calibrations, out_name, out_dir_raw, out_dir_inp
         node_lab <- ""
       }
     }else{
-      # For inequality calibrations that start with '#[0-9]' or for MCMCtree cals
+      # For inequality calibrations that start with '#[0-9]' or for other MCMCtree cals
+      # Only column 8 is allowed
       node_lab <- calibrations[i,8]
     }
     
@@ -1628,11 +1628,11 @@ add_node_const <- function( tt, calibrations, out_name, out_dir_raw, out_dir_inp
     }else{ # For lower/upper bounds when cols 4-5 or 6-7 are given...
       # NOTES: 1 = minage | 2 = mintail | 3 = maxage | 4 = maxtal
       # If upper bound because NAs are in 1 and 2...
-      if( ind_nas == 1 || ind_nas == 2 ){
+      if( 1 %in% ind_nas || 2 %in% ind_nas ){
         node_lab <- paste( "U(", calibrations[j,6], ",",
                            calibrations[j,7], ")", sep = "" )
       } # If lower bound because NAs are in 3 and 4...
-      else if( ind_nas == 3 || ind_nas == 4 ){
+      else if( 3 %in% ind_nas || 4 %in% ind_nas ){
         node_lab <- paste( "L(", calibrations[j,4], ",", 
                            calibrations[j,5], ")", sep = "" )
       }

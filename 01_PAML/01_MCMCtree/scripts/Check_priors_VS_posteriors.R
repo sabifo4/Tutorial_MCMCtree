@@ -118,8 +118,6 @@ for( i in 1:length( dat ) ){
 # Laurasiatheria, etc.) as it will help you identify which plot belongs to which
 # calibration. The second column is the node used in MCMCtree. The third column
 # is the calibration used for that node in MCMCtree format.
-# More information on the Trello card here: 
-# https://trello.com/c/NR034c6u/7-user-specified-prior-vs-effective-prior
 # 
 # [[ NOTES ABOUT ALLOWED CALIBRATION FORMATS]]
 #
@@ -208,7 +206,7 @@ for( k in 1:length(calib_nodes) ){
                        calib_nodes[[ k ]][i,1], "_", name_labs[i], "_plot.pdf",
                        sep = "" ), 
          paper = "a4r", width = 0, height = 0 )
-    # Get user-specified prior in correct formatting (4 nums)
+    # Get calibration density in correct formatting (4 nums)
     is_B    <- grep( x = calib_nodes[[ k ]][i,3], pattern = "B\\(" )
     is_U    <- grep( x = calib_nodes[[ k ]][i,3], pattern = "U\\(" )
     is_L    <- grep( x = calib_nodes[[ k ]][i,3], pattern = "L\\(" )
@@ -300,11 +298,11 @@ for( k in 1:length(calib_nodes) ){
     # Get name of calibration, which corresponds to the first calibration
     # in the list
     tmp_name_calib <- calib_nodes[[ k ]][i,1]
-    # Start plotting user-sp prior, eff. prior, and posterior densities for
+    # Start plotting calibration density, marginal density, and posterior densities for
     # each cross-braced node -- easy for comparisons!
     # Get temporary matching column in `mcmc_obj` to `j`
     plot( density( unlist( mcmc_obj$GBM$divt[ tn_matrix ] ), adj = 1 ),
-          main = paste( "Post VS Effective Prior - ",
+          main = paste( "Post VS Marginal density - ",
                         labs_in_csv[i], " | ", tmp_name_calib, sep = "" ),
           col = "blue", ylim = c(0,max_y), xlim = c(min_x, max_x) )
     lines( density( unlist( mcmc_obj$CLK$divt[ tn_matrix ] ), adj = 1 ), col = "brown" )
@@ -332,10 +330,10 @@ for( k in 1:length(calib_nodes) ){
              from = tmp_allcal[1]-0.5, to = tmp_allcal[1]+0.5,
              n = 1e5, add = TRUE, col = "black" )
     }
-    legend( "topright", legend = c( paste( "User-sp. prior\n",
+    legend( "topright", legend = c( paste( "Calibration density\n",
                                           calib_nodes[[ k ]][i,3], "\n",
                                           sep = "" ),
-                                   "Effective prior",
+                                   "Marginal density",
                                    "Post-GBM", "Post-ILN"),
             lwd = 1, bty = "n", cex = 1,
             col = c( "black", "brown", "blue", "darkolivegreen3" ) )
