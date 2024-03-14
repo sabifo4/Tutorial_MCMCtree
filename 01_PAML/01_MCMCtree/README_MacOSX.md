@@ -193,7 +193,7 @@ chmod 775 *sh
 We will now create a `sum_analyses` directory to analyse the `MCMCtree` output. First, we need to create a file structure compatible with the tools you will subsequently use to summarise the data:
 
 ```sh
-# Run everything from `example_dating` dir (HPC)
+# Run everything from `example_dating` dir
 num_chains=6
 num_datasets=1
 mkdir -p tmp_to_transfer/00_prior
