@@ -12,7 +12,7 @@ duplication=$8 # Enable duplication option or not
 bool_paml=$9   # Boolean, TRUE if PAML is in PATH, FALSE otherwise
 
 # Replace vars in template bash script for job array
-cp pipeline_MCMCtree_template.sh $pipeloc/$dir/$clock/pipeline_$clock".sh"
+cp pipeline_MCMCtree_template_HPC_SGE.sh $pipeloc/$dir/$clock/pipeline_$clock".sh"
 sed -i 's/DIR/'${dir}'/g' $pipeloc/$dir/$clock/pipeline_$clock".sh"
 sed -i 's/CLK/'${clock}'/g' $pipeloc/$dir/$clock/pipeline_$clock".sh"
 sed -i 's/NUMPARTS/'${ndat}'/' $pipeloc/$dir/$clock/pipeline_$clock".sh"
@@ -21,9 +21,7 @@ sed -i 's/DUP_BOOL/'${duplication}'/' $pipeloc/$dir/$clock/pipeline_$clock".sh"
 
 if [[ $nchains -eq 1 ]]
 then 
-sed -i 's/for\ TASK\_ID\ in..*//' $pipeloc/$dir/$clock/pipeline_$clock".sh"
-sed -i 's/^done//' $pipeloc/$dir/$clock/pipeline_$clock".sh"
-sed -i 's/^do//' $pipeloc/$dir/$clock/pipeline_$clock".sh"
+sed -i 's/\-NUM//' $pipeloc/$dir/$clock/pipeline_$clock".sh"
 else 
 sed -i 's/NUM/'${nchains}'/' $pipeloc/$dir/$clock/pipeline_$clock".sh"
 fi

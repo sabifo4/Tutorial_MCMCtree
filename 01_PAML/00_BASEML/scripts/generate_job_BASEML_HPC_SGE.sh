@@ -8,7 +8,7 @@ baseml_exec=$4 # Name of the BASEML binary
 bool_paml=$5   # Boolean, TRUE if PAML is in PATH, FALSE otherwise
 req_ram=$6     # Requested RAM. E.G., `2G`
 # Replace vars in template bash script for job array
-cp pipeline_Hessian_BASEML_template.sh $pipedir/pipeline_Hessian.sh
+cp pipeline_Hessian_BASEML_template_HPC_SGE.sh $pipedir/pipeline_Hessian.sh
 if [[ $aln -eq 1 ]]
 then 
 sed -i 's/\#\$\ \-t\ ..*/\#\$\ \-t\ 1/' $pipedir/pipeline_Hessian.sh
