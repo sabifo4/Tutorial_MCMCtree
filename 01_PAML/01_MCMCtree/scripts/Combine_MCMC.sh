@@ -12,6 +12,11 @@ printf "==========================================================\n"
 #printf "mcmctree_numsapm="$mcmctree_numsamp"\n"
 
 mkdir -p $dirname
+mkdir -p $dirname
+if [[ ! -d mcmcf4traces ]]
+then
+mkdir -p mcmcf4traces
+fi
 count=0
 for i in $seqchains
 do
@@ -22,7 +27,7 @@ do
 		printf $clock"\trun"$i"\n" >> "Not_collected_samples.tsv"
 	else 
 		printf "Parsing dat for run"$i" under "$clock" ... ... \n"
-		end=$( wc -l $dat/$i/mcmc.txt | sed 's/ ..*//' )
+		end=$( wc -l $dat/$i/mcmc.txt | awk '{print $1}' )
 		if [ $count -eq 1 ]
 		then
 			begin=1
@@ -46,12 +51,15 @@ do
 					printf "   [[ One additional line will be removed to match analyses in R ]]\n"
 					end=$(( end - 1 ))
 					sed -n ''${begin}','${end}'p' $dat/$i/mcmc.txt > $dirname/mcmc.txt
+					sed -n ''${begin}','${end}'p' $dat/$i/mcmc.txt > mcmcf4traces/mcmc_$i.txt
 				else
 					sed -n ''${begin}','${end}'p' $dat/$i/mcmc.txt > $dirname/mcmc.txt
+					sed -n ''${begin}','${end}'p' $dat/$i/mcmc.txt > mcmcf4traces/mcmc_$i.txt
 				fi
 			else
 				printf "   [[ You collected all the samples specified in your control file for this chain! ]]\n"
 				sed -n ''${begin}','${end}'p' $dat/$i/mcmc.txt > $dirname/mcmc.txt
+				sed -n ''${begin}','${end}'p' $dat/$i/mcmc.txt > mcmcf4traces/mcmc_$i.txt
 			fi
 		else 
 			begin=2 
@@ -66,12 +74,15 @@ do
 					printf "   [[ One additional line will be removed to match analyses in R ]]\n"
 					end=$(( end - 1 ))
 					sed -n ''${begin}','${end}'p' $dat/$i/mcmc.txt >> $dirname/mcmc.txt
+					sed -n ''${begin}','${end}'p' $dat/$i/mcmc.txt >> mcmcf4traces/mcmc_$i.txt
 				else
 					sed -n ''${begin}','${end}'p' $dat/$i/mcmc.txt >> $dirname/mcmc.txt
+					sed -n ''${begin}','${end}'p' $dat/$i/mcmc.txt >> mcmcf4traces/mcmc_$i.txt
 				fi
 			else
 				printf "   [[ You collected all the samples specified in your control file for this chain! ]]\n"
 				sed -n ''${begin}','${end}'p' $dat/$i/mcmc.txt >> $dirname/mcmc.txt
+				sed -n ''${begin}','${end}'p' $dat/$i/mcmc.txt >> mcmcf4traces/mcmc_$i.txt
 			fi
 		fi
 	fi
