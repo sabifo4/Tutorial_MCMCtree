@@ -4,7 +4,9 @@
 
 ## Introduction
 
-In this repository, you will find step-by-step guidelines to run `MCMCtree` using the approximate likelihood.
+### Reproducible tutorial
+
+In this repository, you will find step-by-step guidelines for timetree inference with PAML under a reproducible environment.
 
 For this tutorial, we assume that the user has already (1) collected their data, (2) inferred the corresponding gene/genome alignment/s, and (3) inferred the corresponding phylogeny/ies. We will focus on the following:
 
@@ -29,11 +31,17 @@ Specific `README.md` files and scripts have been generated so that users can fol
 
 > NOTE: Everyone needs to be familiar with their dataset/s before proceeding with timetree inference: how were the data collected? How were the alignments generated? How are the files going to be organised? In this tutorial, we are not addressing these questions as we are just focusing on the subsequent steps. For a summary on how to approach them, however, we suggest reading [Álvarez-Carretero & dos Reis, 2022](https://link.springer.com/chapter/10.1007/978-3-030-60181-2_13).
 
+### "Quick start" tutorial
+
+We also provide a [`"Quick start" tutorial`](quick_start/README.md) that users can follow to run a simple analysis with PAML without a specific file structure or additional software dependencies. This type of analysis is suitable for running small tests with your dataset when using PAML programs as well as for timetree inference with small datasets. Note that, if you want to use the various scripts provided in this repository, you will need to modify them when running the "Quick start" tutorial given that they rely on a specific file structure.
+
+In addition, you can visit the [`divtime` GitHub repository](https://github.com/mariodosreis/divtime) developed and maintained by [`@mariodosreis`](https://github.com/mariodosreis) to learn how to run timetree inference analyses with phylogenomic datasets (no third party dependencies nor specific file structure to be followed).
+
 ## Software requirements
 
-Before you start this practical session, please make sure you have the following software installed on your PCs:
+Before you start this tutorial, please make sure you have the following software installed on your PCs:
 
-* **`PAML`**: you will be using the latest `PAML` release ([at the time of writing, v4.10.7](https://github.com/abacus-gene/paml/releases/tag/4.10.7)), available from the [`PAML` GitHub repository](https://github.com/abacus-gene/paml). If you do not want to install the software from the source code, then follow (A). If you want to install `PAML` from the source code, then follow (B). If you have a Mac with M1/M2 chips, please follow (C):
+* **`PAML`** (required for both the "quick start" and the "reproducible" analyses): you will be using the latest `PAML` release ([at the time of writing, v4.10.7](https://github.com/abacus-gene/paml/releases/tag/4.10.7)), available from the [`PAML` GitHub repository](https://github.com/abacus-gene/paml). If you do not want to install the software from the source code, then follow (A). If you want to install `PAML` from the source code, then follow (B). If you have a Mac with M1/M2 chips, please follow (C):
 
   * Installation (A): if you have problems installing `PAML` from the source code or you do not have the tools required to compile the source code, then you can [download the pre-compiled binaries available from the latest release by following this link](https://github.com/abacus-gene/paml/releases/tag/4.10.7). Please choose the pre-compiled binaries you need according to your OS, download the corresponding compressed file, and save it in your preferred directory. Then, after decompressing the file, please give executable permissions, export the path to this binary file so you can execute it from a terminal, and you should be ready to go!
     > **Windows users**: we highly recommend you install the Windows Subsystem for Linux (i.e., WSL) on your PCs to properly follow this tutorial -- otherwise, you may experience problems with the Windows Command Prompt. Once you have the WSL installed, then you can download the binaries for Linux.
@@ -79,7 +87,7 @@ Before you start this practical session, please make sure you have the following
 
 * Installation (C) for M1/M2 chips (Mac OSX): you will need to download the `dev` branch on the PAML GitHub repository and compile the binaries from the `dev` source code. Please [follow this link](https://github.com/abacus-gene/paml/tree/dev) and click the green button [`<> Code`] to start the download. You will see that a compressed file called `paml-dev.zip` will start to download. Once you decompress this file, you can go to directory `src` and follow the instructions in (B) to compile the binaries from the source code.
 
-* **`R`** and **`RStudio`**: please download [R](https://cran.r-project.org/) and [RStudio](https://posit.co/download/rstudio-desktop/) as we will be using them throughout the practical. The packages we will be using should work with R versions that are either newer than or equal to v4.1.2. If you are a Windows user, please make sure that you have the correct version of `RTools` installed, which will allow you to install packages from the source code if required. For instance, if you have R v4.1.2, then installing `RTools4.0` shall be fine. If you have another R version installed on your PC, please check whether you need to install `RTools 4.2` or `RTools 4.3`. For more information on which version you should download, [please go to the CRAN website by following this link and download the version you need](https://cran.r-project.org/bin/windows/Rtools/).
+* **`R`** and **`RStudio`** (required only for "reproducible" analyses): please download [R](https://cran.r-project.org/) and [RStudio](https://posit.co/download/rstudio-desktop/) as we will be using them throughout the practical. The packages we will be using should work with R versions that are either newer than or equal to v4.1.2. If you are a Windows user, please make sure that you have the correct version of `RTools` installed, which will allow you to install packages from the source code if required. For instance, if you have R v4.1.2, then installing `RTools4.0` shall be fine. If you have another R version installed on your PC, please check whether you need to install `RTools 4.2` or `RTools 4.3`. For more information on which version you should download, [please go to the CRAN website by following this link and download the version you need](https://cran.r-project.org/bin/windows/Rtools/).
 
     Before you proceed, however, please make sure that you install the following packages too:
 
@@ -100,7 +108,7 @@ Before you start this practical session, please make sure you have the following
 
 * **`Tracer`**: you can use this graphical interface to visually assess the MCMCs you have run during your analyses (e.g., chain efficiency, chain convergence, autocorrelation, etc.). You can [download the latest pre-compiled binaries, `Tracer v1.7.2` at the time of writing, from the `Tracer` GitHub repository](https://github.com/beast-dev/tracer/releases/tag/v1.7.2).
 
-* **Visual Studio Code**: for best experience with this tutorial, we highly recommend you install Visual Studio Code and run the tutorial from this IDE to keep everything tidy, organised, and self-contained. You can download it from [this website](https://code.visualstudio.com/). If you are new to VSC, you can check their webinars to learn about its various features and how to make the most out of it. You may also want to install the following extensions:
+* **Visual Studio Code** (optional): for best experience with this tutorial, we highly recommend you install Visual Studio Code and run the tutorial from this IDE to keep everything tidy, organised, and self-contained. You can download it from [this website](https://code.visualstudio.com/). If you are new to VSC, you can check their webinars to learn about its various features and how to make the most out of it. You may also want to install the following extensions:
   * Markdown PDF -- developer: yzane
   * markdownlint -- developer: David Anson
   * Spell Right -- developer: Bartosz Antosik
