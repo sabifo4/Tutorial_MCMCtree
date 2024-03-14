@@ -7,7 +7,7 @@ Given that we already generated the calibrated tree, the partitioned alignment f
 First, we will create the file structure required for the timetree inference analyses using the following code snippet:
 
 ```sh
-# Run from `example_dating` dir on your HPC/local PC.
+# Run from `example_dating` dir.
 # Please change directories until
 # you are there. Then, run the following
 # commands.
@@ -27,7 +27,7 @@ mkdir -p pipelines_MCMCtree/$i/{GBM,ILN}
 done
 ```
 
-The `example_dating` directory  will now have these two extra directories with the corresponding subdirectories:
+The `example_dating` directory will now have these two extra directories with the corresponding subdirectories:
 
 ```text
 example_dating
@@ -43,20 +43,17 @@ example_dating
 
 >**IMPORTANT NOTE**: When sampling from the posterior, the likelihood is being calculated or approximated, depending on the `userdata` option you set in the control file to run `MCMCtree`. The larger the dataset, the more time it will take for `MCMCtree` to finish regardless of the option you use, although the approximation will be faster than the exact likelihood calculation.
 
-Now, we will transfer our in-house bash scripts to run `MCMCtree` and corresponding template files with which we will parse our data (available under [`scripts`](scripts)) to the `example_dating` directory:
+Now, we will copy our in-house bash scripts to run `MCMCtree` and corresponding template files with which we will parse our data (available under [`scripts`](scripts)) to the `example_dating` directory:
 
 ```sh
 # Run from `01_PAML/01_MCMCtree/scripts`
-##> RUN IF HPC, remember to replace the login details accordingly
-rsync -avz --copy-links *MCMCtree*sh <uname>@<logdetails>:<path>/example_dating/scripts
-##> RUN IF LOCAL PC
 cp *MCMCtree*sh ../../../example_dating/scripts
 ```
 
-You can now go back to your `example_dating` directory (either HPC or local PC) and run the `generate_job_MCMCtree.sh` script, one of our in-house bash scripts mentioned above, using the commands below:
+You can now go back to your `example_dating` directory and run the `generate_job_MCMCtree.sh` (if cluster) or `generate_job_MCMCtree_PC.sh` (if local PC) script, one of our in-house bash scripts mentioned above, using the commands below:
 
 ```sh
-# Run from the `example_dating` dir on your HPC/local PC
+# Run from the `example_dating` dir.
 # Please change directories until
 # you are there. Then run the following
 # commands.
@@ -77,13 +74,6 @@ num_chains=6
 #        If `N`, the executable file will be required to be in the home dirctory,
 #        i.e., directory which name you type as `Arg3`.
 #
-##>> RUN IF HPC
-for i in `seq 1 $num_aln`
-do
-./generate_job_MCMCtree.sh $i GBM 1 $home_dir/pipelines_MCMCtree mcmctree $num_chains example_dating 0 Y
-./generate_job_MCMCtree.sh $i ILN 1 $home_dir/pipelines_MCMCtree mcmctree $num_chains example_dating 0 Y
-done
-##>> RUN IF LOCAL PC
 for i in `seq 1 $num_aln`
 do
 ./generate_job_MCMCtree_PC.sh $i GBM 1 $home_dir/pipelines_MCMCtree mcmctree $num_chains example_dating 0 Y
@@ -103,7 +93,7 @@ Now, before running `MCMCtree` to sample from the posterior, we will run `MCMCtr
 First, we will generate a directory where `MCMCtree` will run when sampling from the prior:
 
 ```sh
-# Run from `example_dating` dir on your HPC/local PC
+# Run from `example_dating` dir.
 # Please change directories until
 # you are there. Then run the following
 # commands.
@@ -120,10 +110,10 @@ done
 
 >**IMPORTANT NOTE**: When sampling from the prior, the likelihood is not being calculated or estimated. In other words, the most time-consuming part of the MCMC does not take place. In that way, you should be able to gather enough samples with fewer runs than those needed when sampling from the posterior.
 
-Then, we will copy the directory `pipelines_MCMCtree` and will generate a copy called `pipelines_MCMCtree_prior` :
+Then, we will copy the directory `pipelines_MCMCtree` and will generate a copy called `pipelines_MCMCtree_prior`:
 
 ```sh
-# Run from `example_dating` dir on your HPC.
+# Run from `example_dating` dir.
 # Please change directories until
 # you are there. Then run the following
 # commands.
@@ -134,7 +124,7 @@ cd pipelines_MCMCtree_prior
 We will modify the bash script that will be submitted as a job array so that the `userdata` option in the control file is equal to `0`, which enables `MCMCtree` to sample from the prior instead of sampling from the posterior (i.e., the alignment file is ignored). In that way, the rest of the setting concerning the evolutionary model will not be enabled by `MCMCtree` as the sequence data are not being used. Last, we will change the path to where the results will be stored:
 
 ```sh
-# Run from `pipelines_MCMCtree_prior` dir on your HPC.
+# Run from `pipelines_MCMCtree_prior`.
 # Please change directories until
 # you are there. Then run the following
 # commands.
@@ -173,7 +163,7 @@ sed -i 's/ln \-s/\#ln \-s/' */*/*sh
 Now, you can check that the lines have been correctly modified:
 
 ```sh
-# Run from `pipelines_MCMCtree_prior` dir on your HPC.
+# Run from `pipelines_MCMCtree_prior`.
 # Please change directories until
 # you are there. Then run the following
 # commands.
@@ -181,7 +171,6 @@ grep '^dir=' */*/*sh
 grep 'usedata' */*/*sh
 grep 'model'  */*/*sh
 grep 'MCMCtree' */*/*sh
-grep '#$ -t' */*/*sh
 ```
 
 ## 2. Analyses with `MCMCtree` when sampling from the prior
@@ -191,23 +180,20 @@ grep '#$ -t' */*/*sh
 Now, we will be able to run `MCMCtree` first when sampling from the prior (i.e., no data used!) using the code snippet below:
 
 ```sh
-# Run from `pipelines_MCMCtree_prior/1/CLK` dir on your HPC.
+# Run from `pipelines_MCMCtree_prior/1/CLK`.
 # Please change directories until
 # you are there. Then run the following
 # commands.
 chmod 775 *sh
-##> RUN IF HPC      
-qsub pipeline_CLK.sh
-##> RUN IF LOCAL PC
 ./pipeline_CLK.sh &
 ```
 
 ### Setting the file structure to analyse `MCMCtree` output - prior
 
-We will now create a `sum_analyses` directory to analyse the `MCMCtree` output. Nevertheless, we first need to transfer the data from the cluster to the corresponding directory on our local PC for further analyses:
+We will now create a `sum_analyses` directory to analyse the `MCMCtree` output. First, we need to create a file structure compatible with the tools you will subsequently use to summarise the data:
 
 ```sh
-# Run everything from `example_dating` in your HPC/local PC
+# Run everything from `example_dating` dir
 num_chains=6
 num_datasets=1
 mkdir -p tmp_to_transfer/00_prior
@@ -228,11 +214,11 @@ grep 'Species tree for FigTree' -A1 ../MCMCtree_prior/$j/CLK/1/out.txt | sed -n 
 done
 ```
 
-Now, you can transfer this temporary directory to your `01_PAML/01_MCMCtree` directory on your local PC, e.g., using `rsync` or copying/moving if you are working from your local PC:
+Now, you can copy these directories to `01_PAML/01_MCMCtree` directory:
 
 ```sh
-# Run from `01_PAML/01_MCMCtree` dir on your local
-# PC. Please change directories until
+# Run from `01_PAML/01_MCMCtree` dir.
+# Please change directories until
 # you are there. Then run the following
 # commands. If you are running this code with your
 # own analyses, make sure that you have correctly
@@ -241,15 +227,6 @@ Now, you can transfer this temporary directory to your `01_PAML/01_MCMCtree` dir
 # Note that we will generate some directories for
 # when the analyses when sampling from the posterior
 # are ready!
-mkdir sum_analyses
-cd sum_analyses
-##> RUN IF HPC!
-# Now, trasnfer the data from the HPC
-rsync -avz --copy-links <uname>@<logdetails>:<path>/example_dating/tmp_to_transfer/00_prior .
-rsync -avz --copy-link <uname>@<logdetails>:<path>/example_dating/pipelines_MCMCtree_prior .
-# Remove blank output files
-rm pipelines_MCMCtree_prior/*/*/*sh.o*
-##> RUN IF LOCAL PC, no need to copy log files as you can already see them on your local PC
 cp -R ../../../example_dating/tmp_to_transfer/00_prior .
 ```
 
@@ -268,10 +245,11 @@ Now, we can run the R script [`MCMC_diagnostics_prior.R`](scripts/MCMC_diagnosti
 5. Generate a new convergence plot with those chains that passed the filters.
 6. Calculate Rhat, tail-ESS, and bulk-ESS to check whether chain convergence has been reached with the chains that have passed filters.
 
-The MCMC diagnostics did not find any of the chains problematic after running [our in-house R script `MCMC_diagnostics_prior.R`](scripts/MCMC_diagnostics_prior.R). Therefore, we used [our in-house bash script `Combine_MCMC.sh`](scripts/Combine_MCMC.sh) to concatenate all the `mcmc.txt` files for the 6 chains in a unique file.
+The MCMC diagnostics did not find any of the chains problematic after running [our in-house R script `MCMC_diagnostics_prior.R`](scripts/MCMC_diagnostics_prior.R). Therefore, we used [our in-house bash script `Combine_MCMC.sh`](scripts/Combine_MCMC.sh) to concatenate the `mcmc.txt` files for the 6 chains that passed the filters in a unique file.
 
 ```sh
 # Run from `01_MCMCtree/scripts`
+chmod 775 *sh
 cp Combine_MCMC.sh ../sum_analyses/00_prior
 # One argument taken: number of chains
 cd ../sum_analyses/00_prior
@@ -292,7 +270,7 @@ count=$(( count + 1 ))
 done
 ```
 
-The script above will generate three directories (one for each dataset) inside the `00_prior` directory, where the `mcmc.txt` with the concatenated samples will be saved. A template script to generate the `FigTree.tre` file with this `mcmc.txt` has been saved inside the [`dummy_ctl_files`](dummy_ctl_files) directory.
+The script above will generate three directories (one for each dataset) inside the `00_prior` directory, where the `mcmc.txt` with the concatenated samples will be saved. In addition, a directory called `mcmcf4traces` will also be generated so that formatted MCMC files compatible with programs such as `Tracer` can be used to check for chain convergence. A template script to generate the `FigTree.tre` file with this `mcmc.txt` has been saved inside the [`dummy_ctl_files`](dummy_ctl_files) directory.
 
 We will now create a dummy alignment with only 2 AAs to generate the `FigTree` files using the concatenated `mcmc.txt` files. In order to do that, we can run the [`Generate_dummy_aln.R`](scripts/Generate_dummy_aln.R). Once you run it, a new directory called `dummy_aln` will be created, which will contain the dummy alignment.
 
@@ -337,14 +315,14 @@ cd $base_dir
 done
 ```
 
-The next step is to plot the user-specified prior VS the effective prior. We used our in-house R script [`Check_priors_effVSuser.R`](scripts/Check_priors_effVSuser.R) to generate these plots. If you are to run this script with other datasets, however, make sure that your "hard bounds" are not `0.000` in the `Calibnodes_*csv` files and, instead, they are `1e-300` (i.e., while 1e-300 is rounded to `0.000` in the `MCMCtre` output, which can be used to generate the csv files aforementioned, we need `1e-300` to plot distributions in R). To make sure this was not affecting our csv files, we ran the following code snippet:
+The next step is to plot the calibration density (commonly referred to as "user-specified prior") VS the marginal density (also known as "effective prior"). We used our in-house R script [`Check_priors_calVSmarg.R`](scripts/Check_priors_calVSmarg.R) to generate these plots. If you are to run this script with other datasets, however, make sure that your "hard bounds" are not `0.000` in the `Calibnodes_*csv` files and, instead, they are `1e-300` (i.e., while 1e-300 is rounded to `0.000` in the `MCMCtre` output, which can be used to generate the csv files aforementioned, we need `1e-300` to plot distributions in R). To make sure this was not affecting our csv files, we ran the following code snippet:
 
 ```sh
 # Run from `01_MCMCtree/calib_files`
 sed -i 's/0\.000/1e\-300/g' *csv
 ```
 
-Once this script has finished, you will see that a new directory `plots/effVSuser` will have been created. Inside this directory, you will find one directory for each individual dataset with individual plots for each node. In addition, all these plots have been merged into a unique document as well (note: some plots may be too small to see for each node, hence why we have generated individual plots).
+Once this script has finished, you will see that a new directory `plots/calVSmarg` will have been created. Inside this directory, you will find one directory for each individual dataset with individual plots for each node. In addition, all these plots have been merged into a unique document as well (note: some plots may be too small to see for each node, hence why we have generated individual plots).
 
 Now, once the MCMC diagnostics have finished, you can extract the final data that you can use to write a manuscript as it follows:
 
@@ -354,7 +332,7 @@ mkdir sum_files_prior
 cp -R sum_analyses/00_prior/mcmc_files*CLK/*CLK*tree sum_files_prior/
 cp -R sum_analyses/00_prior/CLK/*/*/*all_mean*tsv sum_files_prior/
 cp -R plots/ESS_and_chains_convergence/*prior*pdf sum_files_prior/
-cp -R plots/effVSuser sum_files_prior/
+cp -R plots/calVSmarg sum_files_prior/
 ```
 
 ## 3. Analyses with `MCMCtree` when sampling from the posterior
@@ -368,12 +346,6 @@ Now that we have verified that there are no issues between the user-specified pr
 # and run the following command. Please change directories until
 # you are there.
 chmod 775 *sh
-##> RUN IF HPC
-qsub pipeline_GBM.sh
-cd ../ILN
-chmod 775 *sh
-qsub pipeline_ILN.sh
-##> RUN IF LOCAL PC
 ./pipeline_GBM.sh &
 cd ../ILN
 chmod 775 *sh
@@ -382,13 +354,12 @@ chmod 775 *sh
 
 ### Setting the file structure to analyse `MCMCtree` output - posterior
 
-We will now create a directory inside the `sum_analyses` directory to analyse the `MCMCtree` output. Nevertheless, we first need to transfer the data from the cluster to the corresponding directory on our local PC for further analyses:
+We will now create a directory inside the `sum_analyses` directory to analyse the `MCMCtree` output as we did with the results obtained when sampling from the prior:
 
 ```sh
-# Go to your HPC and copy the files that are required for sum stats.
-# We have run 16 chains for analyses sampling from the posterior.
-# Therefore, `i` will go form 1 to 16
-# Run from `example_dating`
+# Run from `example_dating` directory
+# We have run 6 chains for analyses sampling from the posterior.
+# Therefore, `i` will go form 1 to 6
 cd tmp_to_transfer
 num_chains=6
 num_datasets=1
@@ -410,7 +381,7 @@ done
 done
 ```
 
-Now, you can transfer (or copy move if local PC) the temporary directory to your `01_PAML/01_MCMCtre` directory on your local PC, e.g., using `rsync`:
+Now, we will copy this file structure to directory `01_PAML/01_MCMCtre`:
 
 ```sh
 # Run from `01_PAML/01_MCMCtree` dir on your local
@@ -424,20 +395,14 @@ Now, you can transfer (or copy move if local PC) the temporary directory to your
 # when the analyses when sampling from the posterior
 # are ready!
 cd sum_analyses
-##> RUN IF HPC
-rsync -avz --copy-links <uname>@<logdetails>:<path>/example_dating/tmp_to_transfer/01_posterior .
-rsync -avz --copy-links <uname>@<logdetails>:<path>/example_dating/pipelines_MCMCtree .
-# Remove blank output files
-rm pipelines_MCMCtree/*/*/*sh.o*
-##> RUN IF LOCAL PC, no need to transfer log files as we already have access to them!
 cp -R ../../../example_dating/tmp_to_transfer/01_posterior/ .
 ```
 
 ### MCMC diagnostics - posterior
 
-Now that we have the output files from the different MCMC runs in an organised file structure, we are ready to check the chains for convergence!
+Now that we have the output files from the different MCMC runs in an organised file structure, we are ready to check for chain convergence!
 
-We are going to run the R script [`MCMC_diagnostics_posterior.R`](scripts/MCMC_diagnostics_posterior.R) and follow the detailed step-by-step instructions detailed in the script, which are essentially the same ones used when analysing the chains when sampling from the prior. Given that no problems have been found with any of the chains we ran, we are ready to concatenate the parameter values sampled across the 16 independent chains we ran:
+We are going to run the R script [`MCMC_diagnostics_posterior.R`](scripts/MCMC_diagnostics_posterior.R) and follow the detailed step-by-step instructions detailed in the script, which are essentially the same ones used when analysing the chains when sampling from the prior. Given that no problems have been found with any of the chains we ran, we are ready to concatenate the parameter values sampled across the 6 independent chains we ran:
 
 ```sh
 # Run from `01_MCMCtree/scripts`
@@ -463,7 +428,7 @@ count=$(( count + 1 ))
 done
 ```
 
-Once the scripts above have finished, a new directory called `mcmc_files_part_[GBM|ILN]` will be created inside `01_posterior/`, respectively. To map the mean time estimates with the filtered chains, we need to copy a control file, the calibrated Newick tree, and the dummy alignment we previously generated when analysing the results when sampling from the prior:
+Once the scripts above have finished, directories called `mcmc_files_part_[GBM|ILN]` and `mcmcf4traces` will be created inside `01_posterior/`. To map the mean time estimates with the filtered chains, we need to copy a control file, the calibrated Newick tree, and the dummy alignment we previously generated when analysing the results when sampling from the prior:
 
 ```sh
 # Run from `sum_analyses_prot/01_posterior` directory.

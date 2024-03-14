@@ -35,7 +35,7 @@ We have then updated our [template control files](control_files) with the $\alph
 
 Before running `MCMCtree` using the approximate likelihood calculation to speed up timetree inference, we first need to calculate the vector of branch lengths, the gradient (vector), and the Hessian (matrix). We will use `BASEML` for this purpose as our dataset is an amino acid alignment.
 
-The file structure we will use is the following (you could have this file structure on your HPC, but we will run this on your local PC for this practical!):
+The file structure we will use is the following:
 
 ```text
 example_dating/
@@ -57,13 +57,13 @@ example_dating/
       |- uncalibrated # Directory with the uncalibrated tree for `BASEML`
 ```
 
-To create the `example_dating` file structure, we run the following commands from the PC before transferring to the HPC (or run locally):
+To create the `example_dating` file structure, we run the following commands:
 
 ```sh
 # Run the following commands from 
 # directory `00_BASEML`
-mkdir -p HPC/example_dating
-cd HPC/example_dating 
+mkdir -p tmp/example_dating
+cd tmp/example_dating 
 num_aln=1
 for i in `seq 1 $num_aln`
 do
@@ -76,10 +76,10 @@ mkdir -p pipelines_Hessian
 mkdir scripts
 ```
 
-Once the file structure is created, we can now populate it with the input files we have generated some minutes ago: alignment files, tree files, and control files. You can transfer the files to the HPC (or locally as we will show!) as you prefer (below, we show an example of how to do transfer files to the HPC using `rsync`, but you could use other procedures):
+Once the file structure is created, we can now populate it with the input files we have generated some minutes ago: alignment files, tree files, and control files. We will now relocate the location of this `example_dating` directory so that our pipelines work:
 
 ```sh
-# Run from `HPC/example_dating`
+# Run from `tmp/example_dating`
 # Copy alignment
 cp ../../../../00_data_formatting/01_inp_data/example_aln.phy alignments/1/
 # Now, transfer calibrated tree
@@ -90,25 +90,16 @@ cp ../../../../00_data_formatting/01_inp_data/tree_example_uncalib.tree trees/un
 cp ../../control_files/prepbaseml.ctl control_files/1
 # Last, copy the in-house bash scripts with our pipeline
 cp ../../scripts/*sh scripts/
-# Once everything is ready, you can transfer this directory to your HPC
-# or to your local PC (emulating HPC)!
-# One way of doing this is by using `rsync`, but you may use other approaches.
-# Below, you will find an example of the `rsync` commands you should run once
-# you replace the tags with your own credentials.
-# First, move one dir back so you are inside `HPC`
 cd ../
-##>> RUN NEXT COMMAND IF CLUSTER, MAKE SURE YOU CHANGE THE DETAILS!
-rsync -avz --copy-links example_dating <uname>@<server>:<path_to_your_wd_in_HPC>
-##>> RUN NEXT 3 COMMANDs IF LOCAL PC
 mv example_dating ../../../
 cd ../
-rm -r HPC
+rm -r tmp
 ```
 
-Now, we need to generate other input files to estimate the Hessian and the gradient: the input control files for `BASEML`. To do this in a reproducible manner, you can use the [script `generate_prepbaseml.sh`](scripts/generate_prepbaseml.sh), which you can find in the [`01_PAML/00_BASEML/scripts`](01_PAML/00_BASEML/scripts) and which you should have in your `example_dating` directory. Now, connect to your server or go to your local `example_dating` directory and run the next code snippet, where you will execute this script. Specifically, the [`generate_prepbaseml.sh` script](scripts/generate_prepbaseml.sh) needs one argument: the directory name where the alignments are saved: `1`, `2`, and `3` in our case!
+Now, we need to generate other input files to estimate the Hessian and the gradient: the input control files for `BASEML`. To do this in a reproducible manner, you can use the [script `generate_prepbaseml.sh`](scripts/generate_prepbaseml.sh), which you can find in the [`01_PAML/00_BASEML/scripts`](01_PAML/00_BASEML/scripts) and which you should have in your `example_dating` directory. Now,go to the `example_dating` directory and run the next code snippet, where you will execute this script. Specifically, the [`generate_prepbaseml.sh` script](scripts/generate_prepbaseml.sh) needs one argument: the directory name where the alignments are saved: `1`, `2`, and `3` in our case!
 
 ```sh
-# Run from `example_dating/scripts` (HPC or local PC).
+# Run from `example_dating/scripts`
 # Please change directories until
 # you are there. Then, run the following
 # commands.
@@ -125,7 +116,7 @@ done
 To make sure that all the paths have been properly extracted, you can run the following code snippet:
 
 ```sh
-# Run from `example_dating/Hessian` (HPC or local PC)
+# Run from `example_dating/Hessian`
 # Please change directories until
 # you are there. Then, run the following
 # commands.
@@ -137,12 +128,11 @@ grep 'treefile' */prepare_baseml/*ctl
 
 ### Preparing input files
 
-Now that we have the input files (alignment and tree files) and the instructions to run `BASEML` (control file) in our HPC server, we will be manually running `MCMCtree` inside each `prepare_baseml` directory (see file structure above) in a special mode that launches `BASEML` for the sole purpose we want: to infer the vectors and matrix required to approximate the likelihood calculation.
+Now that we have the input files (alignment and tree files) and the instructions to run `BASEML` (control file) in `example_dating`, we will be manually running `MCMCtree` inside each `prepare_baseml` directory (see file structure above) in a special mode that launches `BASEML` for the sole purpose we want: to infer the vectors and matrix required to approximate the likelihood calculation.
 
 ```sh
 # Run `MCMCtree` from
-# `example_dating/Hessian/1/prepare_baseml`
-# dir on the HPC or local PC. 
+# `example_dating/Hessian/1/prepare_baseml`.
 # Please change directories until
 # you are in there.
 # The first command to change directories 
@@ -184,8 +174,8 @@ As soon as you see the last line, you will see that various `tmp000X*` files wil
 Once you have done this, you can check that the control file you will later need has been created:
 
 ```sh
-# Run from the `example_dating/Hessian` dir on your local
-# PC. Please change directories until
+# Run from the `example_dating/Hessian`
+# Please change directories until
 # you are there. Then, run the following
 # commands.
 grep 'seqfile' */*/tmp0001.ctl | wc -l # You should get as many datasets as you have, in this case 1
@@ -201,8 +191,8 @@ Note that, when we ran the commands above, we were not interested in running `BA
 Once all `tmp000*` files are generated for all alignments, we need to make sure that the correct evolutionary model has been enabled (i.e., `model = 4`, `ncatG=4` for HKY85+G4) and that option `method = 1` is enabled, which will speed up the computation of the Hessian and the gradient. We can run the next code snippet to very that the four requirements aforementioned are met:
 
 ```sh
-# Run from the `example_dating/Hessian` dir on your local
-# PC. Please change directories until
+# Run from the `example_dating/Hessian`
+# Please change directories until
 # you are there. Then, run the following
 # commands.
 sed -i 's/method\ \=\ 0/method\ \=\ 1/' */*/tmp0001.ctl
@@ -216,27 +206,17 @@ grep 'model' */*/tmp0001.ctl   # You should see `model = 3` (i.e., empirical+F m
 
 We can now run `BASEML` given that we have the control file ready as well as all the required input files!
 
-We have created a template bash script with flags (i.e., see scripts `pipeline_Hessian_BASEML_template.sh` and `pipeline_Hessian_BASEML_template_PC.sh` in the [`scripts` directory](01_PAML/00_Hessian/scripts)), which will be replaced with the appropriate values by another bash script (either `generate_job_BASEML.sh` or `generate_job_BASEML_PC.sh`, also saved in the [`scripts` directory](01_PAML/00_Hessian/scripts)). Please note that the second bash script will edit the template bash script according to the data alignment/s that will be analysed. We had already copied these scripts to the `example_dating` directory (either local PC OR hpc) when setting our file structure. Therefore, we just need to execute the following code snippet there:
+We have created a template bash script with flags (i.e., see script  `pipeline_Hessian_BASEML_template_PC.sh` in the [`scripts` directory](01_PAML/00_BASEML/scripts)), which will be replaced with the appropriate values by another bash script (i.e.,`generate_job_BASEML_PC.sh`, also saved in the [`scripts` directory](01_PAML/00_BASEML/scripts)). Please note that the second bash script will edit the template bash script according to the data alignment/s that will be analysed. We had already copied these scripts to the `example_dating` directory when setting our file structure. Therefore, we just need to execute the following code snippet there:
 
 ```sh
-# Run from `example_dating` dir on your HPC. Please change directories until
+# Run from `example_dating` dir.
+# Please change directories until
 # you are there. Then, run the following
 # commands.
 home_dir=$( pwd )
 cd scripts
 chmod 775 *sh
 num_aln=1
-##> RUN IF HPC
-# Arg1: Number of alignments
-# Arg2: Path to the pipeline directory
-# Arg3: Name of the working directory (i.e., `example_dating` in this analysis)
-# Arg4: Name of the executable file for BASEML. E.g., `baseml4.10.7`, `baseml`, etc.
-# Arg5: Boolean, PAML exported to the path? `Y` or `N`.
-#       If `N`, the executable file will be required to be in the home dirctory,
-#       i.e., directory which name you type as `Arg3`.
-# Arg6: Requested RAM. E.g., `2G`
-./generate_job_BASEML.sh $num_aln $home_dir/pipelines_Hessian example_dating baseml4.10.7 N "2G"
-##> RUN IF LOCAL PC
 # Arg1: Number of alignments
 # Arg2: Path to the pipeline directory
 # Arg3: Name of the working directory (i.e., `example_dating` in this analysis)
@@ -250,7 +230,7 @@ num_aln=1
 Next, we will go to the `pipelines_Hessian` directory and run the script that will have been generated using the commands above:
 
 ```sh
-# Run from `example_dating/pipelines_Hessian` dir on your HPC.
+# Run from `example_dating/pipelines_Hessian`.
 # Please change directories until
 # you are there. Then, run the following
 # commands.
@@ -262,16 +242,13 @@ Next, we will go to the `pipelines_Hessian` directory and run the script that wi
 ll *
 # Now, execute this bash script
 chmod 775 *sh
-##> RUN IF HPC
-qsub pipeline_Hessian.sh
-##> RUN IF LOCAL PC
-./pipeline_Hessian.sh &
+./pipeline_Hessian.sh & # Include the `&` to run this job in the background!
 ```
 
 Once `BASEML` finishes, we are ready to generate the `in.BV` file that we will later use when running `MCMCtree` to approximate the likelihood calculation:
 
 ```sh
-# Run from dir `example_dating/Hessian/` dir on your HPC
+# Run from dir `example_dating/Hessian/`
 # Please change directories until
 # you are there. Then, run the following
 # commands.
@@ -282,23 +259,5 @@ printf "\nGenerating in.BV files for dir "$i" ... ...\n\n"
 cp $i/rst2 $i/in.BV
 done
 ```
-
----
-
-> RUN ONLY IF YOU HAVE USED THE HPC
-
-We can transfer the output generated by `BASEML` from the HPC to our local PC so that we can keep a backup:
-
-```sh
-# Run from `01_PAML/00_BASEML` in your PC
-mkdir out_BASEML
-cd out_BASEML
-rsync -avz --copy-links <uname>@<server>:<path_to_your_wd_in_HPC>/example_dating/Hessian .
-rsync -avz --copy-links <uname>@<server>:<path_to_your_wd_in_HPC>/example_dating/pipelines_Hessian .
-# Remove unnecessary empty output files
-rm pipelines_Hessian/*sh.o*
-```
-
----
 
 We can now proceed to timetree inference with `MCMCtree`! [You can click this link to move to the next `README.md` file](../01_MCMCtree/README.md)!

@@ -16,7 +16,8 @@ If you open [the alignment file](00_raw_data/alignment/raw_aln.fa), you will see
 # `00_raw_data/alignment` directory
 name=`ls *fa`
 printf "Converting "$name" into a one-line FASTA file\n"
-../../../src/one_line_fasta.pl $name
+chmod 775 ../../../src/*
+perl ../../../src/one_line_fasta.pl $name
 onefa=$( echo $name | sed 's/\.fa/\_one\_line\.fa/' )
 namefa=$( echo $name | sed 's/\.fa//' )
 mv $onefa $namefa.fasta
@@ -31,7 +32,7 @@ After running the code snippet above, you will see that a new FASTA file called 
 aln_name=`ls *fasta`
 a_noext=$( echo $aln_name | sed 's/\.fasta//' )
 num=$( grep '>' $aln_name | wc -l )
-len=$( sed -n '2,2p' $aln_name | sed 's/\r//' | sed 's/\n//' | wc --m )
+len=$( sed -n '2,2p' $aln_name | sed 's/\r//' | sed 's/\n//' | wc -L )
 perl ../../../src/FASTAtoPHYL.pl $aln_name $num $len 
 # Create a directory for input data for `MCMCtree`
 mkdir ../../01_inp_data
@@ -44,12 +45,12 @@ The alignment is now in the correct format, so we can parse the tree file!
 
 ## Tree file
 
-After inferring your phylogeny, you will obtain a tree topology in Newick format with branch lengths such as what you can see in our input file: [`tree_mL.tree`](00_raw_data/trees/tree_ML.tree).
+After inferring your phylogeny, you will obtain a tree topology in Newick format with branch lengths such as what you can see in our input file: [`tree_ML.tree`](00_raw_data/trees/tree_ML.tree).
 
 Your next goal is to calibrate this tree topology. First, however, we will need to get rid of the branch lengths!
 
 ```sh
-# Runfrom `00_raw_data/trees`
+# Run from `00_raw_data/trees`
 cp tree_ML.tree ../../01_inp_data/tree_example_uncalib.tree
 sed -i 's/:[0-9]*\.[0-9]*//g' ../../01_inp_data/tree_example_uncalib.tree
 # NOTE: This regular expresion will work with that example
