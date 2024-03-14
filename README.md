@@ -75,7 +75,7 @@ Before you start this practical session, please make sure you have the following
     ```
 
     Alternatively, you can edit this file using your preferred text editor (e.g., `vim`, `nano`, etc.).
-    >> **Windows users**: we highly recommend you install the Windows Subsystem for Linux (i.e., WSL) on your PCs to properly follow this tutorial -- otherwise, you may experience problems with the Windows Command Prompt. Once you have the WSL installed, then download the source code and follow the instructions listed above.
+    > **Windows users**: we highly recommend you install the Windows Subsystem for Linux (i.e., WSL) on your PCs to properly follow this tutorial -- otherwise, you may experience problems with the Windows Command Prompt. Once you have the WSL installed, then download the source code and follow the instructions listed above.
 
 * Installation (C) for M1/M2 chips (Mac OSX): you will need to download the `dev` branch on the PAML GitHub repository and compile the binaries from the `dev` source code. Please [follow this link](https://github.com/abacus-gene/paml/tree/dev) and click the green button [`<> Code`] to start the download. You will see that a compressed file called `paml-dev.zip` will start to download. Once you decompress this file, you can go to directory `src` and follo the instructions in (B) to compile the binaries from the source code.
 
