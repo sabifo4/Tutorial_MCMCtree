@@ -74,15 +74,15 @@ do
 					printf "   [[ One additional line will be removed to match analyses in R ]]\n"
 					end=$(( end - 1 ))
 					sed -n ''${begin}','${end}'p' $dat/$i/mcmc.txt >> $dirname/mcmc.txt
-					sed -n ''${begin}','${end}'p' $dat/$i/mcmc.txt >> mcmcf4traces/mcmc_$i.txt
+					sed -n '1,'${end}'p' $dat/$i/mcmc.txt > mcmcf4traces/mcmc_$i.txt
 				else
 					sed -n ''${begin}','${end}'p' $dat/$i/mcmc.txt >> $dirname/mcmc.txt
-					sed -n ''${begin}','${end}'p' $dat/$i/mcmc.txt >> mcmcf4traces/mcmc_$i.txt
+					sed -n '1,'${end}'p' $dat/$i/mcmc.txt > mcmcf4traces/mcmc_$i.txt
 				fi
 			else
 				printf "   [[ You collected all the samples specified in your control file for this chain! ]]\n"
 				sed -n ''${begin}','${end}'p' $dat/$i/mcmc.txt >> $dirname/mcmc.txt
-				sed -n ''${begin}','${end}'p' $dat/$i/mcmc.txt >> mcmcf4traces/mcmc_$i.txt
+				sed -n '1,'${end}'p' $dat/$i/mcmc.txt > mcmcf4traces/mcmc_$i.txt
 			fi
 		fi
 	fi
