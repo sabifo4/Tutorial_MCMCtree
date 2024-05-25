@@ -17,3 +17,13 @@ z_old
 01_PAML/01_MCMCtree/sum_*
 ## Main `example_dating` directory (local PC)
 example_dating
+## Comment the results with the quick start, they only start with
+## directory `00_inp_data`
+quick_start/01_PAML/00_BASEML
+quick_start/01_PAML/01_MCMCtree
+quick_start/01_PAML/int_calibs/tree_display
+quick_start/01_PAML/int_calibs/cals_only_mtcdnapri.tree
+quick_start/01_PAML/dummy_aln
+quick_start/01_PAML/out_RData
+quick_start/01_PAML/plots
+quick_start/01_PAML/sum_files_*
