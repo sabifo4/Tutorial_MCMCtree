@@ -12,7 +12,6 @@ printf "==========================================================\n"
 #printf "mcmctree_numsapm="$mcmctree_numsamp"\n"
 
 mkdir -p $dirname
-mkdir -p $dirname
 if [[ ! -d mcmcf4traces ]]
 then
 mkdir -p mcmcf4traces
