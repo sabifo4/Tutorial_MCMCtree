@@ -123,7 +123,7 @@ Before you start this tutorial, please make sure you have the following software
 
 If you have gone through the previous sections, have a clear understanding of how this repository is organised, and have installed the required software... Then you are ready to go!
 
-You can start the tutorial on reproducibility by jumping to the [`00_data_formatting` directory](00_data_formatting) and choosing the `README.md` file that aligns with your OS. If you want to first go through the quick start tutorial, then go to [the `quick_start` directory](quick_start/README.md) and...
+You can start the tutorial on reproducibility by jumping to the [`00_data_formatting` directory](00_data_formatting) and choosing the `README.md` file that suits your OS. If you want to first go through the quick start tutorial, then go to [the `quick_start` directory](quick_start), choose the `README.md` file that suits your OS, and...
 
 Happy timetree inference! :)
 
