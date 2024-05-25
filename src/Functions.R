@@ -281,6 +281,7 @@ sum_MCMC <- function ( num_dirs = 36, delcol = 3,
                       %in% match_csv[,2] )
   for( i in ind_match ){
     tmp_ind <- which( paste( "t_n", match_csv[,2], sep = "" ) == rownames( mean_est_priors )[i] )
+    #cat( length(tmp_ind), "| ",  rownames( mean_est_priors )[tmp_ind], "\n" )
     rownames( mean_est_priors )[i] <- paste( "t_n", match_csv[tmp_ind,2], "_", match_csv[tmp_ind,1], sep = "" )
     mean_est_priors[i,4] <- match_csv[tmp_ind,3]
   }
@@ -758,7 +759,8 @@ read_calib_f <- function( main_dir, f_names, dat, head_avail = TRUE )
 # out        Character, vector with the name of the dataset/s you are 
 #            evaluating.
 plot_check_calibnodes <- function( calibs, divt_list, dat, main_wd,
-                                   ind = TRUE, clock, n_col, n_row, out )
+                                   ind = TRUE, clock, n_col, n_row, out,
+                                   out_format = "jpg" )
   
 {
   
@@ -766,16 +768,24 @@ plot_check_calibnodes <- function( calibs, divt_list, dat, main_wd,
   if( ! dir.exists( paste( main_wd, "plots", sep = "" ) ) ){
     dir.create( paste( main_wd, "plots", sep = "" ) )
   }
-  if( ! dir.exists( paste( main_wd, "plots/calVSmarg/", dat,  sep = "" ) ) ){
-    dir.create( paste( main_wd, "plots/calVSmarg/", dat, sep = "" ) )
+  if( ! dir.exists( paste( main_wd, "plots/margVScalib/", dat,  sep = "" ) ) ){
+    dir.create( paste( main_wd, "plots/margVScalib/", dat, sep = "" ) )
   }
   
-  # In case users have not passed a string of length 3, just get the first three
-  # letters
-  tmp_dat_dir <- substr( x = dat, start = 1, stop = 3 )
-  png( filename = paste( main_wd, "plots/calVSmarg/", dat, "/", out, "_",
-                         tmp_dat_dir, "_", clock,".jpg", sep = "" ),
-         width = 1024, height = 768 )
+  # Name for output file with all plots
+  if( out_format == "jpg" ){
+    jpeg( filename = paste( main_wd, "plots/margVScalib/", dat, "/all_plots_", 
+                           clock,".jpg", sep = "" ),
+         width = 1024, height = 768, quality = 100 )
+  }else if( out_format == "pdf" ){
+    pdf( paste( main_wd, "plots/margVScalib/", dat, "/all_plots_", 
+                clock,".pdf", sep = "" ),
+         paper = "a4r" )
+  }else if( out_format == "tiff" ){
+    tiff( filename = paste( main_wd, "plots/margVScalib/", dat, "/all_plots_", 
+                            clock,".tif", sep = "" ),
+          width = 1024, height = 768, compression = "none" )
+  }
   
   par( mfrow = c(n_row,n_col), mai=c(0.1,0.1,0.1,0.1))
   for( i in 1:length( calibs[,2] ) ){
@@ -924,13 +934,27 @@ plot_check_calibnodes <- function( calibs, divt_list, dat, main_wd,
     title( main = colnames( divt_list[[ 1 ]] )[tmp_node], 
            line = -2.7, sub = tmp_labcab, cex.main = 1.3, cex.sub = 0.7, adj = 0.9 )
     if ( ind == TRUE ){
-      if( ! dir.exists( paste( main_wd, "plots/calVSmarg/", dat, "/ind", sep = "" ) ) ){
-        dir.create( paste( main_wd, "plots/calVSmarg/", dat, "/ind", sep = "" ) )
+      if( ! dir.exists( paste( main_wd, "plots/margVScalib/", dat, "/ind", sep = "" ) ) ){
+        dir.create( paste( main_wd, "plots/margVScalib/", dat, "/ind", sep = "" ) )
       }
-      png( filename = paste( main_wd, "plots/calVSmarg/",  dat, "/ind/CheckUSPvsEP_tn", 
-                             calibs[i,2], "_", calibs[i,1], ".png", sep = "" ),
-           width = 1024, height = 768 )
-      
+      # Check out format
+      if( out_format == "jpg" ){
+        jpeg( filename = paste( main_wd, "plots/margVScalib/",  dat,
+                               "/ind/CheckCalibMarg_tn", 
+                               calibs[i,2], "_", calibs[i,1], ".jpg", sep = "" ),
+             width = 1024, height = 768, quality = 100 )
+      }else if( out_format == "pdf" ){
+        pdf( paste( main_wd, "plots/margVScalib/",  dat,
+                    "/ind/CheckCalibMarg_tn", 
+                    calibs[i,2], "_", calibs[i,1], ".pdf", sep = "" ),
+             paper = "a4r" )
+      }else if( out_format == "tiff" ){
+        tiff( filename = paste( main_wd, "plots/margVScalib/",  dat,
+                                "/ind/CheckCalibMarg_tn", 
+                                calibs[i,2], "_", calibs[i,1], ".tif", sep = "" ),
+              width = 1024, height = 768, compression = "none" )
+      }
+      # Start plot
       plot( density( divt_list[[ 1 ]][,tmp_node], adj = 1 ),
             xlim = c( x_lim[1], x_lim[2] ), ylim = c( y_lim[1], y_lim[2] ),
             main=NULL, xlab = '', ylab = '', cex.axis = 0.7, mgp = c(2.5,0,0),
@@ -955,19 +979,24 @@ plot_check_calibnodes <- function( calibs, divt_list, dat, main_wd,
              line = -20, sub = tmp_labcab, cex.main = 3, cex.sub = 2, adj = 0.9 )
       info.legend <- c( "Calibration density", "Marginal density" )
       col.legend  <- c( "blue", "black" )
-      legend( "topright", legend = info.legend, col = col.legend,
-              lty = 1, bty = 'n', cex = 2 )
+      if( out_format == "pdf" ){
+        legend( "topright", legend = info.legend, col = col.legend,
+                lty = 1, bty = 'n', cex = 1 )
+      }else{
+        legend( "topright", legend = info.legend, col = col.legend,
+                lty = 1, bty = 'n', cex = 2 )
+      }
       dev.off()
     }
   }
   
   plot( x = 1, y = 1, col = "white", xaxt = "n", yaxt = "n", xlab = '', ylab = '' )
-  info.legend <- c( "Calibration density",
-                    "Marginal density" )
+  info.legend <- c( "Cal. density",
+                    "Marg. density" )
   col.legend  <- c( "blue", "black" )
   #coords.plot <- locator()
   legend( "top", legend = info.legend, col = col.legend,
-          lty = 1, bty = 'n', cex = 1.3 )
+          lty = 1, bty = 'n', cex = 0.8 )
   # Switch off main graphics device
   dev.off()
   
@@ -1513,204 +1542,163 @@ QC_conv <- function( num_dirs, delcol, path, num_divt, node_calib, dataset, perc
   
 }
 
-# Function to incorporate node age constraints following PAML notation
-#
-# Arguments:
-#
-# tt            Phylo, object with the tree, previously generated
-# calibrations  Matrix, element of the list generated with the calibration
-#               info. E.g., `all_calibs[[1]]`
-# out_name      Character, name of the dataset analysed
-# out_dir_raw   Character, abs/rel path to the output directory for raw
-#               trees
-# out_dir_inp   Character, abs/rel path to th eoutput directory for inp data
-#
-add_node_const <- function( tt, calibrations, out_name, out_dir_raw, out_dir_inp )
-{
-  # Print message regarding the data
-  cat( "\n\n* * *\nCalibrated tree to be generated: ", out_name, "\n* * *\n" )
-  
-  #-------------------------------#
-  # PART 1: GENERAT TEMPLATE FILE #
-  #-------------------------------#
-  # Generate empty vector
-  keep_indexes <- matrix( 0, nrow = length(rownames(calibrations)), ncol = 3 )
-  # Generate empty vector with as many entries as nodes in the tree
-  tt$node.label <- rep( NA, tt$Nnode )
-  for( i in 1:length(rownames(calibrations)) ){
-    ## Build MCMCtree calib
-    ind_nas  <- which( calibrations[i,] == "" )
-    if( c(8,9,10) %in% ind_nas && length( ind_nas ) == 1 ){ # if B calib
-      node_lab <- paste( "'B(", calibrations[i,4], ",",
-                         calibrations[i,6], ",", calibrations[i,5],
-                         ",", calibrations[i,7], ")'", sep = "" )
-    }else if( length( ind_nas ) == 3 ){ # col8 + two cols for U or L
-      # if lower bounds missing, then it is an upper bound calib
-      if( 4 %in% ind_nas || 5 %in% ind_nas ){
-        node_lab <- paste( "'U(", calibrations[i,6], ",",
-                           calibrations[i,7], ")'", sep = "" )
-      } # if upper bounds missing, then it is a lower bound calib
-      else if( 6 %in% ind_nas || 7 %in% ind_nas ){
-        node_lab <- paste( "'L(", calibrations[i,4], ",",
-                           calibrations[i,5], ")'", sep = "" )
-      }
-      else{
-        node_lab <- ""
-      }
-    }else{
-      # For inequality calibrations that start with '#[0-9]' or for other MCMCtree cals
-      # Only column 8 is allowed
-      node_lab <- calibrations[i,8]
-    }
-    
-    # Get MRCA for these two tips
-    mrca <- ape::getMRCA( phy = tt, tip = c( calibrations[i,2],
-                                             calibrations[i,3]) )
-    keep_indexes[i,1] <- mrca-ape::Ntip(tt)
-    keep_indexes[i,2] <- calibrations[i,1]
-    keep_indexes[i,3] <- paste( calibrations[i,2], "-", calibrations[i,3], "-",
-                                node_lab, sep = "" )
-    
-    cat( "Node label with calibration: ", mrca-ape::Ntip(tt), "\n" )
-    # Replace node label accordingly
-    tt$node.label[mrca-ape::Ntip(tt)] <- paste0( "[", calibrations[i,1],
-                                                 "]", collapse = "" )
-    ## While here, I will not use `tt_cals` as the format is wrong
-    ## once the tree is written out in the next lines outside the `loop`
-    #tt_cals$node.label[mrca-ape::Ntip(tt)] <- node_lab
-  }
-  ## Find duplicates
-  ind_dup   <- which( duplicated(keep_indexes[,1]) == TRUE )
-  nodes_dup <- which( keep_indexes[,1] %in% as.numeric( keep_indexes[ind_dup,1] ) )
-  #keep_indexes[nodes_dup,]
-  if( length( nodes_dup ) > 0 ){
-    stop( "There are duplicated nodes, you need to check!" )
-  }
-  # Remove "NA" from the labs
-  ind_na_bools <- is.na( x = tt$node.label )
-  ind_na       <- which( ind_na_bools == TRUE )
-  tt$node.label[ind_na] <- ""
-  # Write PHYLIP header, then the calibrated tree
-  writeLines( text = paste( length(tt$tip.label), " 1", sep = "" ), 
-              con = paste( out_dir_raw, "cals_only_", out_name, ".tree",
-                           sep = "" ) )
-  ape::write.tree( phy = tt,
-                   file = paste( out_dir_raw, "cals_only_", out_name, ".tree",
-                                 sep = "" ),
-                   append = TRUE )
-  
-  #-----------------------------------------#
-  # PART 2: READ TREE AND CALIBRATIONS FILE #
-  #-----------------------------------------#
-  # Read tree and get phylip header
-  # NOTE: Make always sure that there is at least one blank line at the 
-  # end of the tree file! Otherwise, you will get an error telling you that 
-  # there is an incomplete final line in these files.
-  tt_name       <- paste( out_dir_raw, "cals_only_", out_name, ".tree",
-                          sep = "" )
-  tt            <- readLines( tt_name )
-  phylip.header <- tt[1]
-  tt            <- tt2 <- tt3 <- tt[2]
-  
-  #----------------------------------------#
-  # PART 3: REPLACE TAGS WITH CALIBRATIONS #
-  #----------------------------------------#
-  # Replace calibration names with corresponding calibration
-  for( j in 1:length(rownames(calibrations)) ){
-    # Build MCMCtree calib that will be replaced
-    ind_nas  <- which( calibrations[j,4:7] == "" )
-    if( length( ind_nas ) == 0 ){ # For soft bounds when cols 4-7 are given...
-      node_lab <- paste( "B(", calibrations[j,4], ",",
-                         calibrations[j,6], ",", calibrations[j,5], 
-                         ",", calibrations[j,7], ")", sep = "" )
-    }else if ( length( ind_nas ) == 4 ){ # If only MCMCtree is given in col8...
-      node_lab <- calibrations[j,8]
-    }else{ # For lower/upper bounds when cols 4-5 or 6-7 are given...
-      # NOTES: 1 = minage | 2 = mintail | 3 = maxage | 4 = maxtal
-      # If upper bound because NAs are in 1 and 2...
-      if( 1 %in% ind_nas || 2 %in% ind_nas ){
-        node_lab <- paste( "U(", calibrations[j,6], ",",
-                           calibrations[j,7], ")", sep = "" )
-      } # If lower bound because NAs are in 3 and 4...
-      else if( 3 %in% ind_nas || 4 %in% ind_nas ){
-        node_lab <- paste( "L(", calibrations[j,4], ",", 
-                           calibrations[j,5], ")", sep = "" )
-      }
-      else{
-        node_lab <- ""
-      }
-    }
-    # Now, `nodel_lab` will have the calibration in `MCMCtree` format already
-    # ready to replace the corresponding flag generated in the previous step
-    # for each calibrated node
-    #
-    # Conditional is used so that the single quotation marks are only kept 
-    # in the upper-bound calibration for the root. Inequality calibrations
-    # do not require single quotation marks
-    tmp_calib <- gsub( x = node_lab, pattern = "\\(..*",
-                       replacement = "" )
-    tmp_calib <- gsub( x = tmp_calib, pattern = "[0-9]..*",
-                       replacement = "" )
-    if( tmp_calib == 'B' || tmp_calib == 'U' || tmp_calib == 'L' || tmp_calib == 'ST' ){
-      tt <- gsub( pattern = paste0("\\[",calibrations[j,1],"\\]"),
-                  x = tt,
-                  replacement = paste( "'", node_lab, "'", sep = "" ) )
-    }else{ # For cross-braced nodes
-      tt <- gsub( pattern = paste0("\\[",calibrations[j,1],"\\]"),
-                  x = tt,
-                  replacement = paste( node_lab, sep = "" ) )
-    }
-    # Copy to visualise in FigTree
-    reps <- gsub( x = gsub( x = gsub( x = gsub( x = gsub( x = node_lab,
-                                                          pattern = "\\{",
-                                                          replacement = "(" ),
-                                                pattern = "\\}",
-                                                replacement = ")" ), 
-                                      pattern = "\\[|\\]", replacement = "" ),
-                            pattern = "\\#", replacement = "flag" ),
-                  pattern = " ", replacement = "-" )
-    # For cross-braced calibrations without fossil
-    if( tmp_calib == '#' ){
-      reps <- gsub( x = gsub( x = reps, pattern = "\\#", replacement = "flag" ),
-                    pattern = "\\]", replacement = "" )
-      tt2 <- gsub( pattern = paste0("\\[",calibrations[j,1],"\\]"),
-                   x = tt2,
-                   replacement = paste0( "'", reps, "-", calibrations[j,1], "'", 
-                                         collapse = "" ) )
-    }else{ # For the rest of calibrations
-      tt2 <- gsub( pattern = paste0("\\[",calibrations[j,1],"\\]"),
-                   x = tt2,
-                   replacement = paste0( "'", reps, "-", calibrations[j,1], "'",
-                                         collapse = "" ) )
-    }
-    # Generate an uncalibrated tree for CODEML!
-    tt3 <- gsub( pattern = paste0("\\[",calibrations[j,1],"\\]"),
-                 x = tt3,
-                 replacement = "" )
-  }
-  
-  #---------------------------------------#
-  # PART 4: WRITE CALIBRATED TREE IN FILE #
-  #---------------------------------------#
-  out_dir <- out_dir_inp
-  if( ! dir.exists( out_dir_inp ) ){
-    dir.create( out_dir_inp )
-  }
-  write( x = phylip.header, file = paste( out_dir, out_name, "_calib_MCMCtree.tree", sep = "" ) )
-  write( x = tt, file = paste( out_dir, out_name, "_calib_MCMCtree.tree", sep = "" ),
-         append = TRUE )
-  write( x = phylip.header, file = paste( out_dir_raw, out_name,
-                                          "_fordisplay_calib_MCMCtree.tree",
-                                          sep = "" ) )
-  write( x = tt2, file = paste( out_dir_raw, out_name,
-                                "_fordisplay_calib_MCMCtree.tree", sep = "" ),
-         append = TRUE )
-  # write( x = phylip.header, file = paste( out_dir, out_name, "_uncalib.tree", sep = "" ) )
-  # write( x = tt3, file = paste( out_dir, out_name, "_uncalib.tree", sep = "" ),
-  #        append = TRUE )
-  
-  # Return objects
-  return( list( tt_calib=tt, keep_indexes=keep_indexes ) )
-}
 
+# Function to generate a plot to compare various densities: marginal densities,
+# calibration densities, and posterior time densities. This is an internal
+# function within script `Check_priors_VS_posteriors.R`, which will only work
+# if specific objects have been generated before (arguments).
+#
+# Arguments
+#
+# dat          Character, name of the dataset/s. Length equals to the number
+#              of datasets being analysed.
+# calib_nodes  List, each entry is a matrix with the correct format for
+#              calibrations. As many entries as datasets are being anlaysed.
+# mcmc_obj     List, there are three entries per dataset: a list 
+#              with divtime info for analyses when sampling from a prior and
+#              two other lists with the same info but when sampling from the
+#              posterior (one per relaxed-clock).
+# home_dir     Character, path to home directory
+plot_priorVSpost <- function( dat, calib_nodes, mcmc_obj, home_dir )
+{
+  # Start counter
+  count_mcmc <- 0
+  # Start looping over each dataset to get as many plots as calibrated
+  # nods
+  for( k in 1:length(dat) ){
+    name_labs   <- calib_nodes[[ k ]][[1]][,2] ## one set of cals per dataset
+    labs_in_csv <- paste( "t_n", calib_nodes[[ k ]][[1]][,2], sep = "" )
+    # Extract CLK, GBM, and ILN from `mcmc_obj` for that specific dataset
+    cat( "[[ DATASET ", dat[k], "]]\n" )
+    count_mcmc  <- count_mcmc + 1
+    cat( " ---> Extracting data ", names(mcmc_obj)[count_mcmc], "\n" )
+    mcmc_CLK    <- mcmc_obj[[ count_mcmc ]]
+    count_mcmc  <- count_mcmc + 1
+    cat( " ---> Extracting data ", names(mcmc_obj)[count_mcmc], "\n" )
+    mcmc_GBM    <- mcmc_obj[[ count_mcmc ]]
+    count_mcmc  <- count_mcmc + 1
+    cat( " ---> Extracting data ", names(mcmc_obj)[count_mcmc], "\n" )
+    mcmc_ILN    <- mcmc_obj[[ count_mcmc ]]
+    # Start plotting!
+    for( i in 1:length(labs_in_csv) ){
+      pdf( file = paste( home_dir, "plots/priorVSpost_", dat[k], "_", 
+                         calib_nodes[[ k ]][[1]][i,1], "_", name_labs[i], "_plot.pdf",
+                         sep = "" ), 
+           paper = "a4r", width = 0, height = 0 )
+      # Get user-specified prior in correct formatting (4 nums)
+      is_B    <- grep( x = calib_nodes[[ k ]][[1]][i,3], pattern = "B\\(" )
+      is_U    <- grep( x = calib_nodes[[ k ]][[1]][i,3], pattern = "U\\(" )
+      is_L    <- grep( x = calib_nodes[[ k ]][[1]][i,3], pattern = "L\\(" )
+      is_flag <- grep( x = calib_nodes[[ k ]][[1]][i,3], pattern = "flag" )
+      if( length( is_B ) == 1 && length( is_flag ) == 0 ){
+        # 4 numbers
+        tmp_allcal <- as.numeric( stringr::str_split( string = gsub( pattern = "B\\(|\\)", 
+                                                                     replacement = "",
+                                                                     x = calib_nodes[[ k ]][[1]][i,3] ),
+                                                      pattern = "," )[[1]] )
+      }
+      if( length( is_U ) == 1 && length( is_flag ) == 0 ){
+        # 2 numbers
+        tmp_allcal <- as.numeric( stringr::str_split( string = gsub( pattern = "U\\(|\\)", 
+                                                                     replacement = "",
+                                                                     x = calib_nodes[[ k ]][[1]][i,3] ),
+                                                      pattern = "," )[[1]] )
+      }
+      if( length( is_L ) == 1 && length( is_flag ) == 0 ){
+        # 2 numbers
+        tmp_allcal <- as.numeric( stringr::str_split( string = gsub( pattern = "L\\(|\\)", 
+                                                                     replacement = "",
+                                                                     x = calib_nodes[[ k ]][[1]][i,3] ),
+                                                      pattern = "," )[[1]] )
+      }
+      if( length( is_flag ) == 1 ){
+        tmp_allcal <- ""
+      }
+      # Get max/min x and y
+      ##> NOTE: Only the first number is used, because the other number/s in 
+      ##> `dup_dat[[i]` have the same fossil info!
+      tn_matrix <- which( colnames(mcmc_GBM$divt) %in% labs_in_csv[i] )
+      max_y     <- max( c( max( density( mcmc_GBM$divt[[ tn_matrix[1] ]], adj = 1 )$y ),
+                           max( density( mcmc_ILN$divt[[ tn_matrix[1] ]], adj = 1 )$y ),
+                           max( density( mcmc_CLK$divt[[ tn_matrix[1] ]], adj = 1 )$y ) ) )
+      if( length( is_B ) == 1 && length( is_flag ) == 0 ){
+        max_x <- max( c( max( density( mcmc_GBM$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         max( density( mcmc_ILN$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         max( density( mcmc_CLK$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         tmp_allcal[2]) )
+        min_x <- min( c( min( density( mcmc_GBM$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         min( density( mcmc_ILN$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         min( density( mcmc_CLK$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         tmp_allcal[1] ) )
+      }
+      if( length( is_U ) == 1 && length( is_flag ) == 0 ){
+        max_x <- max( c( max( density( mcmc_GBM$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         max( density( mcmc_ILN$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         max( density( mcmc_CLK$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         c( tmp_allcal[1] + 1 ) ) )
+        min_x <- min( c( min( density( mcmc_GBM$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         min( density( mcmc_ILN$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         min( density( mcmc_CLK$divt[[ tn_matrix[1] ]], adj = 1 )$x ) ) )
+      }
+      if( length( is_L ) == 1 && length( is_flag ) == 0 ){
+        max_x <- max( c( max( density( mcmc_GBM$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         max( density( mcmc_ILN$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         max( density( mcmc_CLK$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         c( tmp_allcal[1]) + 2 ) )
+        min_x <- min( c( min( density( mcmc_GBM$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         min( density( mcmc_ILN$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         min( density( mcmc_CLK$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         tmp_allcal[1] ) )
+      }
+      if( length( is_flag ) == 1 ){
+        max_x <- max( c( max( density( mcmc_GBM$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         max( density( mcmc_ILN$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         max( density( mcmc_CLK$divt[[ tn_matrix[1] ]], adj = 1 )$x ) ) )
+        min_x <- min( c( min( density( mcmc_GBM$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         min( density( mcmc_ILN$divt[[ tn_matrix[1] ]], adj = 1 )$x ),
+                         min( density( mcmc_CLK$divt[[ tn_matrix[1] ]], adj = 1 )$x ) ) )
+      }
+      # Get name of calibration, which corresponds to the first calibration
+      # in the list
+      tmp_name_calib <- calib_nodes[[ k ]][[1]][i,1]
+      # Start plotting user-sp prior, eff. prior, and posterior densities for
+      # each cross-braced node -- easy for comparisons!
+      # Get temporary matching column in `mcmc_obj` to `j`
+      plot( density( unlist( mcmc_GBM$divt[ tn_matrix ] ), adj = 1 ),
+            main = paste( "Post VS Effective Prior - ",
+                          labs_in_csv[i], " | ", tmp_name_calib, sep = "" ),
+            col = "blue", ylim = c(0,max_y), xlim = c(min_x, max_x) )
+      lines( density( unlist( mcmc_CLK$divt[ tn_matrix ] ), adj = 1 ), col = "brown" )
+      lines( density( unlist( mcmc_ILN$divt[ tn_matrix ] ), adj = 1 ),
+             col = "darkolivegreen3" )
+      if( length( is_B ) == 1 && length( is_flag ) == 0 ){
+        curve( mcmc3r::dB( x, tL = tmp_allcal[1], tU = tmp_allcal[2],
+                           pL = tmp_allcal[3], pU = tmp_allcal[4] ),
+               from = tmp_allcal[1]-0.5, to = tmp_allcal[2]+0.5,
+               n = 1e5, add = TRUE, col = "black" )
+      }
+      if( length( is_U ) == 1 && length( is_flag ) == 0 ){
+        curve( mcmc3r::dU( x, tU = tmp_allcal[1], pU = tmp_allcal[2] ),
+               from = min_x, to = tmp_allcal[1]+1,
+               n = 1e5, add = TRUE, col = "black" )
+      }
+      if( length( is_L ) == 1 && length( is_flag ) == 0 ){
+        curve( mcmc3r::dL( x, tL = tmp_allcal[1], pL = tmp_allcal[2] ),
+               from = tmp_allcal[1]-1, to = max_x,
+               n = 1e5, add = TRUE, col = "black" )
+      }
+      legend( "topleft", legend = c( paste( "User-sp. prior\n",
+                                            calib_nodes[[ k ]][[1]][i,3], "\n",
+                                            sep = "" ),
+                                     "Effective prior",
+                                     "Post-GBM", "Post-ILN"),
+              lwd = 1, bty = "n", cex = 1.8,
+              col = c( "black", "brown", "blue", "darkolivegreen3" ) )
+      cols_vec <- c( "blue", "red", "purple", "darkgreen", "brown" )
+      # Close pdf
+      dev.off()
+    }
+  }
+  
+}
 
