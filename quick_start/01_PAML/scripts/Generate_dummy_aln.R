@@ -24,7 +24,7 @@ setwd( wd )
 #--------------#
 # The tips in the uncalibrated tree will be used to generate the dummy
 # alignments
-tt <- ape::read.tree( file = "calibs/int_calibs/tree_display/mtcdnapri_uncalib.tree" )
+tt <- ape::read.tree( file = "../00_inp_data/tree_display/mtcdnapri_uncalib.tree" )
 
 #-------#
 # TASKS #
